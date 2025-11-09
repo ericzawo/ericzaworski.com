@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Published Works | Eric Zaworski</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #fff;
+      --fg: #333;
+      --muted: #666;
+      --highlight: #e0ff7d;
+    }
+    body.dark {
+      --bg: #000;
+      --fg: #eaeaea;
+      --muted: #9aa0a6;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      line-height: 1.6;
+      color: var(--fg);
+      background-color: var(--bg);
+      padding: 40px 20px;
+      max-width: 700px;
+      margin: 0 auto;
+      opacity: 0;
+      animation: fadeIn 1s ease forwards;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 100vh;
+      padding-bottom: 180px;
+    }
+    @keyframes fadeIn { to { opacity: 1; } }
+
+    ::selection { background: var(--highlight); color: #000; }
+
+    h2 { font-size: 16px; margin-bottom: 10px; font-weight: normal; color: var(--fg); }
+    p, li { font-size: 14px; color: var(--fg); margin-bottom: 8px; }
+
+    a {
+      color: #000;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    a:hover { text-decoration: none; }
+    body.dark a { color: #fff; }
+
+    .section { margin-bottom: 30px; }
+    ul { list-style: none; padding-left: 0; }
+    li { margin-bottom: 6px; }
+
+    /* Floating Header */
+    .header-nav {
+      position: fixed;
+      top: calc(10px + env(safe-area-inset-top, 0px));
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
+      white-space: nowrap;
+      text-align: center;
+      z-index: 1000;
+      pointer-events: auto;
+    }
+    .header-nav a {
+      color: var(--muted);
+      font-weight: normal;
+      text-decoration: none;
+    }
+    .header-nav a:hover { color: var(--fg); }
+
+    /* Clock */
+    .time-display {
+      position: fixed;
+      bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      white-space: nowrap;
+      z-index: 900;
+    }
+    .time-line .name-full { display: inline; }
+    .time-line .name-code { display: none; }
+    .secs { display: inline; }
+
+    /* Dark mode toggle */
+    .toggle-wrap {
+      position: fixed;
+      right: 12px;
+      bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      user-select: none;
+      z-index: 950;
+    }
+    .switch {
+      --w: 48px; --h: 28px; --pad: 3px;
+      position: relative;
+      width: var(--w);
+      height: var(--h);
+      background: #e5e7eb;
+      border-radius: var(--h);
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06);
+      transition: background .2s ease;
+      cursor: pointer;
+    }
+    .switch::after {
+      content: "";
+      position: absolute;
+      top: var(--pad);
+      left: var(--pad);
+      width: calc(var(--h) - var(--pad)*2);
+      height: calc(var(--h) - var(--pad)*2);
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 1px 2px rgba(0,0,0,.15);
+      transition: transform .2s ease;
+    }
+    .switch.on { background: #22c55e; }
+    .switch.on::after { transform: translateX(calc(var(--w) - var(--h))); }
+    body.dark .switch { background: #374151; }
+    body.dark .switch.on { background: #16a34a; }
+    .toggle-label { font-size: 12px; color: var(--muted); }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-nav {
+        position: static;
+        transform: none;
+        margin-bottom: 10px;
+      }
+      .time-display {
+        position: static;
+        transform: none;
+        text-align: center;
+        margin-top: 20px;
+        font-size: 11px;
+      }
+      .time-line .name-full { display: none; }
+      .time-line .name-code { display: inline; }
+      .secs { display: none; }
+      .toggle-wrap {
+        position: static !important;
+        justify-content: center;
+        margin-top: 25px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+
+    .muted-link { font-weight: normal; color: var(--muted); cursor: pointer; }
+    .muted-link:hover { color: var(--fg); }
+  </style>
+</head>
+<body>
+<!-- Floating Header -->
+<nav class="header-nav" role="navigation" aria-label="Primary">
+  <a href="https://www.ericzaworski.com/" target="_self">Eric Zaworski</a>
+  &nbsp;|&nbsp;
+  <a href="https://www.ericzaworski.com/awards" target="_self">Awards</a>
+  &nbsp;|&nbsp;
+  <a href="https://www.ericzaworski.com/published" target="_self">Published</a>
+  &nbsp;|&nbsp;
+  <a href="https://www.ericzaworski.com/contact" target="_self">Contact</a>
+</nav>
+
+  <main>
+    <!-- Complex -->
+    <section class="section">
+      <h2>Complex Magazine</h2>
+      <ul>
+        <li><a href="https://www.complex.com/sneakers/a/eric-zaworski/asics-pensole-footwear-design-academy" target="_blank" rel="noopener">Recapping the ASICS “Fresh-Up” Gel-180 Masterclass Event at PENSOLE Footwear Design Academy</a></li>
+        <li><a href="https://www.complex.com/style/a/eric-zaworski/photo-recap-drake-ovo-pop-up-shop-toronto" target="_blank" rel="noopener">A Photo Recap of the Drake and OVO Pop-Up Shop in Toronto</a></li>
+        <li><a href="https://www.complex.com/music/a/eric-zaworski/dj-spinn-toronto-interview" target="_blank" rel="noopener">DJ Spinn Speaks on the Past, Present, and Future of TEKLIFE</a></li>
+        <li><a href="http://complex.com/style/a/james-harris/street-style-dipset-pop-up-shop-toronto" target="_blank" rel="noopener">Street Style at the Dipset Pop-Up Shop in Toronto</a></li>
+      </ul>
+    </section>
+
+    <!-- The FADER (collapsed with View all) -->
+    <section class="section">
+      <h2>The FADER</h2>
+      <ul>
+        <li><a href="https://www.thefader.com/2016/04/23/beyonce-tv-event-lemonade-on-hbo" target="_blank" rel="noopener">Beyoncé's TV Event Lemonade Is On HBO Now</a></li>
+        <li><a href="https://www.thefader.com/2016/04/23/serena-williams-cameo-beyonce-lemonade" target="_blank" rel="noopener">Serena Williams Makes A Cameo On Beyoncé's TV Special Lemonade</a></li>
+        <li><a href="https://www.thefader.com/2016/03/30/anamanaguchi-release-capsule-silence-xxiv-a-video-game-album" target="_blank" rel="noopener">Bitpop Band Anamanaguchi Release Capsule Silence XXIV, A Video Game Album</a></li>
+      </ul>
+      <p><a href="#" class="muted-link" id="faderToggle" onclick="toggleFader(event)">View all</a></p>
+      <ul id="faderAll" style="display:none;">
+        <li><a href="https://www.thefader.com/2016/04/23/pharrell-and-scott-vener-dedicate-an-hour-mix-to-prince-on-othertone" target="_blank" rel="noopener">Pharrell And Scott Vener Dedicate A One Hour Mix To Prince On Their Beats 1 Show</a></li>
+        <li><a href="https://www.thefader.com/2016/04/23/jay-electronica-says-a-collaboration-with-chance-the-rapper-is-coming" target="_blank" rel="noopener">Jay Electronica Says A Collaboration With Chance The Rapper Is Coming</a></li>
+        <li><a href="https://www.thefader.com/2016/04/23/the-yeah-yeah-yeahs-played-a-surprise-set-in-new-york-last-night" target="_blank" rel="noopener">The Yeah Yeah Yeahs Played A Surprise Set In New York Last Night</a></li>
+        <li><a href="https://www.thefader.com/2016/04/23/asap-rocky-was-joined-by-asap-ferg-miguel-and-tyler-the-creator-at-coachella" target="_blank" rel="noopener">ASAP Rocky, ASAP Ferg, Tyler, The Creator, And Miguel At Coachella</a></li>
+        <li><a href="https://www.thefader.com/2016/04/23/watch-sufjan-stevens-and-gallant-cover-purple-rain-at-coachella" target="_blank" rel="noopener">Watch Sufjan Stevens And Gallant Cover “Purple Rain” At Coachella</a></li>
+        <li><a href="https://www.thefader.com/2016/04/23/todays-ovo-sound-radio-episode-has-been-rescheduled-for-monday" target="_blank" rel="noopener">Today's OVO Sound Radio Episode Has Been Rescheduled</a></li>
+        <li><a href="https://www.thefader.com/2016/04/01/tunji-ige-road-to-missed-calls-documentary-video" target="_blank" rel="noopener">Tunji Ige Releases “Road To Missed Calls” Documentary Video</a></li>
+        <li><a href="https://www.thefader.com/2016/04/01/tory-lanez-drops-a-music-video-for-la-confidential" target="_blank" rel="noopener">Tory Lanez Drops A Music Video For “LA Confidential”</a></li>
+        <li><a href="https://www.thefader.com/2016/03/31/stream-twenty88-jhene-aiko-and-big-sean-now" target="_blank" rel="noopener">TWENTY88, The Eight Song Collaboration Between Jhené Aiko And Big Sean Is Out Now</a></li>
+        <li><a href="https://www.thefader.com/2016/03/31/stream-the-life-of-pablo-now-on-apple-music" target="_blank" rel="noopener">The Life Of Pablo Is Now Available On Spotify, Apple Music, and Google Play</a></li>
+        <li><a href="https://www.thefader.com/2016/03/28/lil-wayne-sues-universal-music-group-over-profits-from-drake-nicki-minaj" target="_blank" rel="noopener">Lil Wayne Sues Universal Music Group Over Profits From Drake, Nicki Minaj</a></li>
+        <li><a href="https://www.thefader.com/2016/03/28/migos-are-in-the-studio-with-kanye-west-big-sean-and-lil-yachty" target="_blank" rel="noopener">Migos Are In The Studio With Kanye West, Big Sean, Vic Mensa, And Lil Yachty</a></li>
+        <li><a href="https://www.thefader.com/2016/03/28/diiv-cancels-european-tour" target="_blank" rel="noopener">DIIV Cancels Remaining European Tour Dates</a></li>
+        <li><a href="https://www.thefader.com/2016/03/25/wiz-khalifa-pays-tribute-to-phife-dawg-with-electric-relaxation-flip" target="_blank" rel="noopener">Wiz Khalifa Pays Tribute to Phife Dawg With “Electric Relaxation” Flip</a></li>
+        <li><a href="https://www.thefader.com/2016/03/25/moogfest-condemns-north-carolina-anti-lgbtq-law-" target="_blank" rel="noopener">Moogfest Condemns New Anti-LGBTQ Law In North Carolina</a></li>
+        <li><a href="https://www.thefader.com/2016/03/25/kid-cudi-releases-the-frequency" target="_blank" rel="noopener">Kid Cudi Drops Surprise Track “The Frequency”</a></li>
+        <li><a href="https://www.thefader.com/2016/03/25/boosie-badazz-drops-private-room-with-tony-michael-and-rich-homie-quan" target="_blank" rel="noopener">Boosie Badazz Releases “Private Room” With Tony Michael And Rich Homie Quan</a></li>
+        <li><a href="https://www.thefader.com/2016/03/25/future-the-weeknd-low-life-music-video" target="_blank" rel="noopener">Future And The Weeknd Drop Visuals For “Low Life”</a></li>
+        <li><a href="https://www.thefader.com/2016/03/24/ty-dolla-sign-westside-like-a-drug-stream" target="_blank" rel="noopener">Ty Dolla $ign Drops Two New Songs</a></li>
+        <li><a href="https://www.thefader.com/2016/03/24/zayn-malik-mind-of-mind-new-album-out-now" target="_blank" rel="noopener">Zayn Malik’s Debut Album Mind Of Mine, Is Out Now</a></li>
+        <li><a href="https://www.thefader.com/2016/03/24/slime-season-3-young-thug-out-now" target="_blank" rel="noopener">Young Thug’s Slime Season 3 Has Been Released</a></li>
+        <li><a href="https://www.thefader.com/2016/03/24/kanye-west-shares-with-them-a-new-song-by-young-thug" target="_blank" rel="noopener">Kanye West Shares “With Them,” A New Song By Young Thug</a></li>
+        <li><a href="https://www.thefader.com/2016/03/24/sbtrkt-new-ep-save-yourself" target="_blank" rel="noopener">SBTRKT Has Released Save Yourself</a></li>
+        <li><a href="https://www.thefader.com/2016/03/24/ahead-of-islime-season-3i-young-thug-shares-new-track-problem" target="_blank" rel="noopener">Ahead Of Slime Season 3, Young Thug Shares New Track "Problem"</a></li>
+        <li><a href="https://www.thefader.com/2016/03/24/asap-rocky-waka-flocka-goldie-mack" target="_blank" rel="noopener">A$AP Rocky And Waka Flocka Flame Connect On “Goldie Mack”</a></li>
+        <li><a href="https://www.thefader.com/2016/03/23/a-tribe-called-quest-statement-phife-dawg-death" target="_blank" rel="noopener">A Tribe Called Quest Have Released A Statement On Phife Dawg’s Passing</a></li>
+        <li><a href="https://www.thefader.com/2016/03/23/sbtrkt-dram-mabel-i-feel-your-pain-bbc-radio-1" target="_blank" rel="noopener">SBTRKT Taps D.R.A.M. And Mabel For “I Feel Your Pain”</a></li>
+        <li><a href="https://www.thefader.com/2016/03/22/justin-bieber-cancels-all-forthcoming-meet-and-greets-with-fans" target="_blank" rel="noopener">Justin Bieber Cancels All Forthcoming Meet And Greets With Fans</a></li>
+        <li><a href="https://www.thefader.com/2016/03/22/kanye-west-says-his-pop-up-store-sold-s1-million-of-clothing-in-two-days" target="_blank" rel="noopener">Kanye West Says His Pop Up Store Sold $1 Million Of Clothing In Two Days</a></li>
+        <li><a href="https://www.thefader.com/2016/03/22/flying-lotus-shares-three-unreleased-tracks-brainfeeder" target="_blank" rel="noopener">Flying Lotus Shares Three Unreleased Tracks</a></li>
+        <li><a href="https://www.thefader.com/2016/03/21/drake-baka-aka-not-nice-don-jail-type" target="_blank" rel="noopener">Drake's Friend Baka Aka Not Nice Releases “Don Jail (Type)”</a></li>
+        <li><a href="https://www.thefader.com/2016/03/21/skrillex-remix-hundred-waters-bbc-radio-chance-the-rapper" target="_blank" rel="noopener">Skrillex Drops A Remix Of “Show Me Love” By Hundred Waters On BBC Radio 1</a></li>
+        <li><a href="https://www.thefader.com/2016/03/21/nigo-recruits-stormzy-for-adidas-originals-campaign" target="_blank" rel="noopener">Nigo Recruits Stormzy For Adidas Originals Campaign</a></li>
+        <li><a href="https://www.thefader.com/2016/03/04/french-montana-kanye-west-yeezy-boost" target="_blank" rel="noopener">French Montana Shares Behind The Scenes Shots Of Music Video With Kanye West</a></li>
+        <li><a href="https://www.thefader.com/2016/03/04/2-chainz-and-lil-wayne-bounce-video" target="_blank" rel="noopener">2 Chainz And Lil Wayne Just Released A Video For “Bounce”</a></li>
+        <li><a href="https://www.thefader.com/2016/03/04/grimes-to-collaborate-with-stella-mccartney-on-sustainable-fragrance" target="_blank" rel="noopener">Grimes Is The New Face Of Stella McCartney's POP Perfume</a></li>
+        <li><a href="https://www.thefader.com/2016/03/04/joey-badass-announce-mr-robot" target="_blank" rel="noopener">Joey Bada$$ To Star In New Season Of Mr. Robot</a></li>
+      </ul>
+    </section>
+
+    <!-- Highsnobiety -->
+    <section class="section">
+      <h2>Highsnobiety</h2>
+      <ul>
+        <li><a href="https://www.highsnobiety.com/p/instagram-flexing-op-ed/" target="_blank" rel="noopener">It's Time to Find a Better Use for Instagram Than Flexing</a></li>
+        <li><a href="https://www.highsnobiety.com/p/stwo-interview/" target="_blank" rel="noopener">Stwo Talks Working with Noah “40” Shebib, His New EP, Toronto & More</a></li>
+      </ul>
+    </section>
+
+    <!-- Vice -->
+    <section class="section">
+      <h2>Vice Magazine</h2>
+      <ul>
+        <li><a href="https://www.vice.com/en/article/dj-earl-is-carrying-the-torch-for-teklifes-next-generation/" target="_blank" rel="noopener">DJ Earl is Carrying the Torch for Teklife’s Next Generation</a></li>
+        <li><a href="https://www.vice.com/en/article/elaquent-interview-guelph-producer/" target="_blank" rel="noopener">An Elaquent Interview With The Guelph Producer</a></li>
+        <li><a href="https://www.vice.com/en/article/premiere-briskinthehouse-see-me-video/" target="_blank" rel="noopener">BriskInTheHouse Asks You to “See Me” and Go Buy His Organic Juice</a></li>
+        <li><a href="https://www.vice.com/en/article/djemba-djemba-wants-to-blow-your-mind-in-and-outside-the-club/" target="_blank" rel="noopener">Djemba Djemba Wants to Blow Your Mind In and Outside the Club</a></li>
+        <li><a href="https://www.vice.com/en/article/kaytranada-not-missing-a-beat/" target="_blank" rel="noopener">Kaytranada: Not Missing a Beat</a></li>
+        <li><a href="https://www.vice.com/en/article/skepta-cmw-2016-live-review/" target="_blank" rel="noopener">Skepta Brought the UK Underground to Toronto</a></li>
+        <li><a href="https://www.vice.com/sv/article/william-cole-manager-kaytranada-signed-to-xl-and-stwo-ovo-40/" target="_blank" rel="noopener">Meet the 23-Year Old Who Got Kaytranada Signed to XL and Stwo a Deal With OVO’s Noah “40” Shebib</a></li>
+        <li><a href="https://www.vice.com/en/article/post-malone-cmw-toronto-2015/" target="_blank" rel="noopener">Post Malone’s Canadian Debut Was Unserious and Joyous</a></li>
+      </ul>
+    </section>
+
+    <!-- Pitchfork -->
+    <section class="section">
+      <h2>Pitchfork</h2>
+      <ul>
+        <li><a href="https://pitchfork.com/thepitch/660-empire-as-a-site-for-well-a-lot-a-roundtable-discussion/" target="_blank" rel="noopener">Empire as a Site for, Well, A Lot: A Roundtable Discussion</a></li>
+      </ul>
+    </section>
+
+    <!-- The Wall Street Journal -->
+    <section class="section">
+      <h2>The Wall Street Journal</h2>
+      <ul>
+        <li><a href="https://www.wsj.com/articles/popup-goes-the-record-release-1382634872" target="_blank" rel="noopener">Pop-Up Goes the Record Release</a></li>
+      </ul>
+    </section>
+
+    <!-- The Globe and Mail -->
+    <section class="section">
+      <h2>The Globe and Mail</h2>
+      <ul>
+        <li><a href="https://www.theglobeandmail.com/life/home-and-garden/architecture/torontos-giant-container-building-homes-with-an-acetylene-torch/article28997437/" target="_blank" rel="noopener">Toronto’s Giant Container: Building homes with an acetylene torch</a></li>
+      </ul>
+    </section>
+
+    <!-- Las Vegas Review-Journal -->
+    <section class="section">
+      <h2>Las Vegas Review-Journal</h2>
+      <ul>
+        <li><a href="https://neon.reviewjournal.com/entertainment/group-of-a-list-musicians-want-more-money-for-their-work/" target="_blank" rel="noopener">Group of A-list musicians want more money for their work</a></li>
+      </ul>
+    </section>
+
+    <!-- Exclaim! -->
+    <section class="section">
+      <h2>Exclaim! (Canada)</h2>
+      <ul>
+        <li><a href="https://exclaim.ca/music/article/dej_loaf_is_ready_for_her_closeup" target="_blank" rel="noopener">Dej Loaf Is Ready for Her Closeup</a></li>
+        <li><a href="https://exclaim.ca/music/article/drake_future-what_time_to_be_alive" target="_blank" rel="noopener">Drake and Future — What a Time to Be Alive (review)</a></li>
+        <li><a href="https://exclaim.ca/music/article/meek_mill-dreams_worth_more_than_money" target="_blank" rel="noopener">Meek Mill — Dreams Worth More Than Money (review)</a></li>
+        <li><a href="https://exclaim.ca/music/article/8203badbadnotgoods_chester_hansen_discusses_working_with_ghostface_killah" target="_blank" rel="noopener">BADBADNOTGOOD on the Spark That Flamed Their Ghostface Killah-equipped 'Sour Soul'</a></li>
+        <li><a href="https://exclaim.ca/music/article/drake-if_youre_reading_this_its_too_late" target="_blank" rel="noopener">Drake — If You're Reading This It's Too Late (review)</a></li>
+      </ul>
+    </section>
+
+    <!-- Wikipedia -->
+    <section class="section">
+      <h2>Wikipedia</h2>
+      <ul>
+        <li><a href="https://en.wikipedia.org/wiki/Special:Search?go=Go&search=eric+zaworski&ns0=1" target="_blank" rel="noopener">Citations of music journalism work (search)</a></li>
+      </ul>
+    </section>
+
+    <!-- Talks / Radio / Podcasts -->
+    <section class="section">
+      <h2>Talks, Radio & Podcasts</h2>
+      <ul>
+        <li><a href="https://www.linkedin.com/feed/update/urn:li:activity:7369177568341696512/" target="_blank" rel="noopener">Scale Smarter: The AI Growth Podcast — Interview</a></li>
+        <li><a href="https://x.com/SMWiToronto/status/934066633148190720" target="_blank" rel="noopener">2017 Social Media Week: Toronto</a></li>
+        <li><a href="https://www.instagram.com/p/C5d8Rj9gD1c/" target="_blank" rel="noopener">Thiss Studio Architecture Firm (London) — Talk</a></li>
+        <li><a href="https://www.instagram.com/p/BleAZdRnZZ6/?img_index=2" target="_blank" rel="noopener">2018 New Currency Panel — Paris</a></li>
+        <li><a href="https://open.spotify.com/episode/4HZ5jGxvsu9mpd3g4pv1rX?si=b828ba80949a4aee" target="_blank" rel="noopener">THE RHYTHM SECTION — Daft Punk 1993–2021</a></li>
+        <li><a href="https://soundcloud.com/thenandnowproject/eric-zaworski" target="_blank" rel="noopener">Then and Now — Eric Zaworski</a></li>
+        <li><a href="https://www.cbc.ca/radio/spark/the-spark-guide-to-sound-and-music-1.5191285/spotify-wants-your-dna-to-decide-what-you-listen-to-1.4868844" target="_blank" rel="noopener">CBC Radio — Spotify wants your DNA to decide what you listen to</a></li>
+        <li><a href="https://www.nts.live/shows/guests/episodes/tony-goodguy-29th-june-2018" target="_blank" rel="noopener">NTS Radio (London) — Guest</a></li>
+        <li><a href="https://www.mixcloud.com/newcurrency/new-currency-radio-002-ft-grey93-ace-dillinger-and-young-teesh/" target="_blank" rel="noopener">New Currency Radio — Episode 002</a></li>
+        <li><a href="https://www.mixcloud.com/frissonradio/frisson-radio-034-ft-eric-zaworski/" target="_blank" rel="noopener">CIUT 89.5fm — Frisson Radio #34 (Guest)</a></li>
+        <li><a href="https://withrevere.com/thunder-dan-bremnes" target="_blank" rel="noopener">Production Assistant — “Thunder” by Dan Bremnes</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <!-- Clock -->
+  <div class="time-display" id="timeDisplay">
+    <span class="time-line">
+      <span class="name-full">Los Angeles</span><span class="name-code">LAX</span>:
+      <span id="la-hm">--:--</span><span class="secs">:<span id="la-s">--</span></span>
+      &nbsp;|&nbsp;
+      <span class="name-full">Toronto</span><span class="name-code">YYZ</span>:
+      <span id="to-hm">--:--</span><span class="secs">:<span id="to-s">--</span></span>
+      &nbsp;|&nbsp;
+      <span class="name-full">Kraków</span><span class="name-code">KRK</span>:
+      <span id="kr-hm">--:--</span><span class="secs">:<span id="kr-s">--</span></span>
+    </span>
+  </div>
+
+  <!-- Dark Mode -->
+  <div class="toggle-wrap" aria-label="Appearance">
+    <span class="toggle-label">Dark</span>
+    <div class="switch" id="themeSwitch" role="switch" aria-checked="false" tabindex="0"></div>
+  </div>
+
+  <script>
+    // Time helpers
+    function fmtHM(d, tz) { return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZone: tz }); }
+    function fmtS(d, tz)  { return d.toLocaleTimeString([], { second: '2-digit', timeZone: tz }); }
+    function updateTimes() {
+      const now = new Date();
+      document.getElementById('la-hm').textContent = fmtHM(now, 'America/Los_Angeles');
+      document.getElementById('la-s').textContent  = fmtS(now, 'America/Los_Angeles');
+      document.getElementById('to-hm').textContent = fmtHM(now, 'America/Toronto');
+      document.getElementById('to-s').textContent  = fmtS(now, 'America/Toronto');
+      document.getElementById('kr-hm').textContent = fmtHM(now, 'Europe/Warsaw');
+      document.getElementById('kr-s').textContent  = fmtS(now, 'Europe/Warsaw');
+    }
+    updateTimes();
+    setInterval(updateTimes, 1000);
+
+    // Dark mode (off by default; persisted)
+    const themeSwitch = document.getElementById('themeSwitch');
+    function applyTheme(dark, persist = true) {
+      document.body.classList.toggle('dark', dark);
+      themeSwitch.classList.toggle('on', dark);
+      themeSwitch.setAttribute('aria-checked', dark ? 'true' : 'false');
+      if (persist) { try { localStorage.setItem('theme-dark', dark ? '1' : '0'); } catch(e) {} }
+    }
+    (function initTheme(){
+      let saved = null;
+      try { saved = localStorage.getItem('theme-dark'); } catch(e) {}
+      applyTheme(saved === '1', false);
+    })();
+    function toggleTheme() {
+      const makeDark = !document.body.classList.contains('dark');
+      applyTheme(makeDark);
+    }
+    themeSwitch.addEventListener('click', toggleTheme);
+    themeSwitch.addEventListener('keydown', (e) => {
+      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggleTheme(); }
+    });
+
+    // FADER "View all" toggle
+    function toggleFader(e) {
+      e.preventDefault();
+      const list = document.getElementById('faderAll');
+      const btn  = document.getElementById('faderToggle');
+      const showing = list.style.display !== 'none';
+      list.style.display = showing ? 'none' : 'block';
+      btn.textContent = showing ? 'View all' : 'Hide';
+    }
+  </script>
+</body>
+</html>
