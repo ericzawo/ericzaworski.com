@@ -405,7 +405,20 @@
     applyTheme(makeDark);
     document.documentElement.classList.toggle('dark', makeDark);
   }
-  themeSwitch.addEventListener('click', toggleTheme, { passive: true });
+  
+    function toggleFader(event) {
+  event.preventDefault();
+  const allList = document.getElementById('faderAll');
+  const toggleLink = document.getElementById('faderToggle');
+  if (allList.style.display === 'none' || allList.style.display === '') {
+    allList.style.display = 'block';
+    toggleLink.textContent = 'Hide';
+  } else {
+    allList.style.display = 'none';
+    toggleLink.textContent = 'View all';
+  }
+}
+themeSwitch.addEventListener('click', toggleTheme, { passive: true });
   themeSwitch.addEventListener('keydown', (e) => {
     if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggleTheme(); }
   });
