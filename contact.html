@@ -1,83 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Contact | Eric Zaworski</title>
 <style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --bg: #fff; --fg: #333; --muted: #666; --highlight: #e0ff7d; }
+body.dark { --bg: #000; --fg: #eaeaea; --muted: #9aa0a6; }
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  margin: 0;
-  padding: 40px 20px 80px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   line-height: 1.6;
+  color: var(--fg);
+  background-color: var(--bg);
+  max-width: 900px;
+  margin: 0 auto;
+  opacity: 0;
+  animation: fadeIn 1s ease forwards;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 80px 20px 120px;
 }
+@keyframes fadeIn { to { opacity: 1; } }
+a { color: #000; font-weight: bold; text-decoration: none; }
+a:hover { text-decoration: none; }
+body.dark a { color: #fff; }
+
+/* Header nav consistent with site */
 .header-nav {
   position: fixed;
   top: calc(10px + env(safe-area-inset-top, 0px));
   left: 50%;
   transform: translateX(-50%);
-  font-weight: 500;
+  font-size: 12px;
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
+  white-space: nowrap;
+  text-align: center;
   z-index: 1000;
+  pointer-events: auto;
 }
 .header-nav a {
-  color: inherit;
+  color: var(--muted);
+  font-weight: normal;
   text-decoration: none;
 }
+.header-nav a:hover {
+  color: var(--fg);
+}
+
+/* Clock */
 .time-display {
   position: fixed;
-  bottom: 20px;
+  bottom: calc(10px + env(safe-area-inset-bottom, 0px));
   left: 50%;
   transform: translateX(-50%);
-  display: flex;
-  gap: 20px;
-  font-size: 14px;
+  font-size: 12px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  white-space: nowrap;
+  z-index: 900;
 }
-.section {
+
+/* Contact section layout */
+.contact-section {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
   gap: 40px;
-  max-width: 900px;
-  margin: 0 auto;
-  padding-top: 120px;
+  margin-top: 120px;
 }
-.section img {
+.contact-section img {
   width: 300px;
   height: auto;
   border-radius: 8px;
 }
+.contact-section .info p {
+  font-size: 14px;
+  margin-bottom: 12px;
+  color: var(--fg);
+}
+.contact-section .info strong {
+  font-weight: bold;
+}
+
+/* Responsive adjustments */
 @media (max-width: 768px) {
-  .section {
-    flex-direction: column;
-    padding-top: 160px;
-  }
   .header-nav {
-    position: fixed;
-    left: 50%;
-    transform: translateX(-50%);
+    position: static;
+    transform: none;
     margin-bottom: 10px;
   }
   .time-display {
-    flex-direction: column;
-    bottom: 10px;
+    position: static;
+    transform: none;
     text-align: center;
+    margin-top: 20px;
+    font-size: 11px;
+  }
+  .contact-section {
+    flex-direction: column;
+    margin-top: 160px;
   }
 }
 </style>
 </head>
 <body>
-<nav class="header-nav">
-  <a href="https://www.ericzaworski.com/">Eric Zaworski</a>&nbsp;|&nbsp;
-  <a href="https://www.ericzaworski.com/awards">Awards</a>&nbsp;|&nbsp;
-  <a href="https://www.ericzaworski.com/published">Published</a>&nbsp;|&nbsp;
+<nav class="header-nav" role="navigation" aria-label="Primary">
+  <a href="https://www.ericzaworski.com/">Eric Zaworski</a> &nbsp;|&nbsp;
+  <a href="https://www.ericzaworski.com/awards">Awards</a> &nbsp;|&nbsp;
+  <a href="https://www.ericzaworski.com/published">Published</a> &nbsp;|&nbsp;
   <a href="https://www.ericzaworski.com/contact">Contact</a>
 </nav>
 
-<main class="section">
+<main class="contact-section">
   <img src="https://images.squarespace-cdn.com/content/v1/686e32c1b4eff3545c7156e5/4f310d7e-3e5a-415c-a1a0-6bf3e0dcece7/eric+zaworski+headshot+2025.jpeg?format=2500w" alt="Eric Zaworski Headshot">
-  <div>
+  <div class="info">
     <p><strong>About Eric</strong><br>
-    Eric Zaworski is a marketer and founder of the social media agency ezmedia. With a background in music journalism, he helps entrepreneurs and brands with go to market planning, paid social, and organic strategies. He splits his time between Los Angeles, Toronto and Kraków, and enjoys running, music and spending time with his family.</p>
+    Eric Zaworski is a marketer and founder of the social media agency ezmedia. With a background in music journalism, he helps entrepreneurs and brands with go to market planning, paid social, and organic strategies. He splits his time between Los Angeles, Toronto and Kraków and enjoys running, music and spending time with his family.</p>
     <p><strong>Contact</strong><br>
     Email: eric@ez.media<br>
     Phone: +1&nbsp;416&nbsp;316&nbsp;9995<br>
@@ -89,9 +132,9 @@ body {
 </main>
 
 <div class="time-display">
-  <div><span id="la-h">--</span>:<span id="la-m">--</span>:<span id="la-s">--</span> LA</div>
-  <div><span id="to-h">--</span>:<span id="to-m">--</span>:<span id="to-s">--</span> Toronto</div>
-  <div><span id="kr-h">--</span>:<span id="kr-m">--</span>:<span id="kr-s">--</span> Kraków</div>
+  <span id="la-h">--</span>:<span id="la-m">--</span>:<span id="la-s">--</span> LA&nbsp;&nbsp;
+  <span id="to-h">--</span>:<span id="to-m">--</span>:<span id="to-s">--</span> Toronto&nbsp;&nbsp;
+  <span id="kr-h">--</span>:<span id="kr-m">--</span>:<span id="kr-s">--</span> Kraków
 </div>
 
 <script>
@@ -104,18 +147,20 @@ const fmtS_TO = new Intl.DateTimeFormat('en-CA', {timeZone: 'America/Toronto', s
 const fmtH_KR = new Intl.DateTimeFormat('pl-PL', {timeZone: 'Europe/Warsaw', hour: '2-digit', hour12: false});
 const fmtM_KR = new Intl.DateTimeFormat('pl-PL', {timeZone: 'Europe/Warsaw', minute: '2-digit'});
 const fmtS_KR = new Intl.DateTimeFormat('pl-PL', {timeZone: 'Europe/Warsaw', second: '2-digit'});
+
 function updateTimes() {
   const now = new Date();
-  document.getElementById('la-h').textContent = fmtH_LA.format(now);
-  document.getElementById('la-m').textContent = fmtM_LA.format(now);
+  document.getElementById('la-h').textContent = fmtH_LA.format(now).padStart(2,'0');
+  document.getElementById('la-m').textContent = fmtM_LA.format(now).padStart(2,'0');
   document.getElementById('la-s').textContent = fmtS_LA.format(now).padStart(2,'0');
-  document.getElementById('to-h').textContent = fmtH_TO.format(now);
-  document.getElementById('to-m').textContent = fmtM_TO.format(now);
+  document.getElementById('to-h').textContent = fmtH_TO.format(now).padStart(2,'0');
+  document.getElementById('to-m').textContent = fmtM_TO.format(now).padStart(2,'0');
   document.getElementById('to-s').textContent = fmtS_TO.format(now).padStart(2,'0');
-  document.getElementById('kr-h').textContent = fmtH_KR.format(now);
-  document.getElementById('kr-m').textContent = fmtM_KR.format(now);
+  document.getElementById('kr-h').textContent = fmtH_KR.format(now).padStart(2,'0');
+  document.getElementById('kr-m').textContent = fmtM_KR.format(now).padStart(2,'0');
   document.getElementById('kr-s').textContent = fmtS_KR.format(now).padStart(2,'0');
 }
+
 updateTimes();
 setInterval(updateTimes, 1000);
 </script>
