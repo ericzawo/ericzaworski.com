@@ -144,20 +144,35 @@ body.dark a { color: #fff; }
   </span>
 </div>
 
-<!-- Dark Mode Toggle -->
+<!-- Dark Mode -->
 <div class="toggle-wrap" aria-label="Appearance">
   <span class="toggle-label">Dark</span>
   <div class="switch" id="themeSwitch" role="switch" aria-checked="false" tabindex="0"></div>
 </div>
 
+<!-- Defer non-critical JS work -->
 <script>
-  // 24‑hour formatters reused each tick
-  const fmtHM_LA = new Intl.DateTimeFormat([], { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'America/Los_Angeles' });
-  const fmtS_LA  = new Intl.DateTimeFormat([], { second: '2-digit', timeZone: 'America/Los_Angeles' });
-  const fmtHM_TO = new Intl.DateTimeFormat([], { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'America/Toronto' });
-  const fmtS_TO  = new Intl.DateTimeFormat([], { second: '2-digit', timeZone: 'America/Toronto' });
-  const fmtHM_KR = new Intl.DateTimeFormat([], { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Warsaw' });
-  const fmtS_KR  = new Intl.DateTimeFormat([], { second: '2-digit', timeZone: 'Europe/Warsaw' });
+  // 24-hour formatters, reused each tick
+  const fmtHM_LA = new Intl.DateTimeFormat([], {
+    hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'America/Los_Angeles'
+  });
+  const fmtS_LA  = new Intl.DateTimeFormat([], {
+    second: '2-digit', timeZone: 'America/Los_Angeles'
+  });
+
+  const fmtHM_TO = new Intl.DateTimeFormat([], {
+    hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'America/Toronto'
+  });
+  const fmtS_TO  = new Intl.DateTimeFormat([], {
+    second: '2-digit', timeZone: 'America/Toronto'
+  });
+
+  const fmtHM_KR = new Intl.DateTimeFormat([], {
+    hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Warsaw'
+  });
+  const fmtS_KR  = new Intl.DateTimeFormat([], {
+    second: '2-digit', timeZone: 'Europe/Warsaw'
+  });
 
   function updateTimes() {
     const now = new Date();
@@ -171,17 +186,15 @@ body.dark a { color: #fff; }
   updateTimes();
   setInterval(updateTimes, 1000);
 
-  // Dark mode switch logic
+  // Theme (unchanged)
   const themeSwitch = document.getElementById('themeSwitch');
   function applyTheme(dark, persist = true) {
     document.body.classList.toggle('dark', dark);
     themeSwitch.classList.toggle('on', dark);
     themeSwitch.setAttribute('aria-checked', dark ? 'true' : 'false');
-    if (persist) {
-      try { localStorage.setItem('theme-dark', dark ? '1' : '0'); } catch (e) {}
-    }
+    if (persist) { try { localStorage.setItem('theme-dark', dark ? '1' : '0'); } catch(e) {} }
   }
-  (function initTheme() {
+  (function initTheme(){
     const isDark = document.documentElement.classList.contains('dark');
     applyTheme(isDark, false);
   })();
@@ -192,10 +205,7 @@ body.dark a { color: #fff; }
   }
   themeSwitch.addEventListener('click', toggleTheme, { passive: true });
   themeSwitch.addEventListener('keydown', (e) => {
-    if (e.key === ' ' || e.key === 'Enter') {
-      e.preventDefault();
-      toggleTheme();
-    }
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggleTheme(); }
   });
 </script>
 
