@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Awards | Eric Zaworski</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #fff;
+      --fg: #333;
+      --muted: #666;
+      --highlight: #e0ff7d;
+    }
+    body.dark {
+      --bg: #000;
+      --fg: #eaeaea;
+      --muted: #9aa0a6;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      line-height: 1.6;
+      color: var(--fg);
+      background-color: var(--bg);
+      padding: 40px 20px;
+      max-width: 700px;
+      margin: 0 auto;
+      opacity: 0;
+      animation: fadeIn 1s ease forwards;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 100vh;
+      padding-bottom: 180px;
+    }
+    @keyframes fadeIn { to { opacity: 1; } }
+
+    ::selection { background: var(--highlight); color: #000; }
+
+    h1 { display: none; }
+    h2 { font-size: 16px; margin-bottom: 10px; font-weight: normal; color: var(--fg); }
+    p, li { font-size: 14px; color: var(--fg); margin-bottom: 8px; }
+    .meta { color: var(--muted); font-size: 12px; }
+
+    a {
+      color: #000;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    a:hover { text-decoration: none; }
+    body.dark a { color: #fff; }
+
+    .section { margin-bottom: 30px; }
+    ul { list-style: none; padding-left: 0; }
+    li { margin-bottom: 10px; }
+
+    /* Floating Header */
+    .header-nav {
+      position: fixed;
+      top: calc(10px + env(safe-area-inset-top, 0px));
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
+      white-space: nowrap;
+      text-align: center;
+      z-index: 1000;
+      pointer-events: auto;
+    }
+    .header-nav a {
+      color: var(--muted);
+      font-weight: normal;
+      text-decoration: none;
+    }
+    .header-nav a:hover { color: var(--fg); }
+
+    /* Clock */
+    .time-display {
+      position: fixed;
+      bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      white-space: nowrap;
+      z-index: 900;
+    }
+    .time-line .name-full { display: inline; }
+    .time-line .name-code { display: none; }
+    .secs { display: inline; }
+
+    /* Dark mode toggle */
+    .toggle-wrap {
+      position: fixed;
+      right: 12px;
+      bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      user-select: none;
+      z-index: 950;
+    }
+    .switch {
+      --w: 48px; --h: 28px; --pad: 3px;
+      position: relative;
+      width: var(--w);
+      height: var(--h);
+      background: #e5e7eb;
+      border-radius: var(--h);
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06);
+      transition: background .2s ease;
+      cursor: pointer;
+    }
+    .switch::after {
+      content: "";
+      position: absolute;
+      top: var(--pad);
+      left: var(--pad);
+      width: calc(var(--h) - var(--pad)*2);
+      height: calc(var(--h) - var(--pad)*2);
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 1px 2px rgba(0,0,0,.15);
+      transition: transform .2s ease;
+    }
+    .switch.on { background: #22c55e; }
+    .switch.on::after { transform: translateX(calc(var(--w) - var(--h))); }
+    body.dark .switch { background: #374151; }
+    body.dark .switch.on { background: #16a34a; }
+    .toggle-label { font-size: 12px; color: var(--muted); }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-nav {
+        position: static;
+        transform: none;
+        margin-bottom: 10px;
+      }
+      .time-display {
+        position: static;
+        transform: none;
+        text-align: center;
+        margin-top: 20px;
+        font-size: 11px;
+      }
+      .time-line .name-full { display: none; }
+      .time-line .name-code { display: inline; }
+      .secs { display: none; }
+      .toggle-wrap {
+        position: static !important;
+        justify-content: center;
+        margin-top: 25px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+<!-- Floating Header -->
+<nav class="header-nav" role="navigation" aria-label="Primary">
+  <a href="https://www.ericzaworski.com/" target="_self">Eric Zaworski</a>
+  &nbsp;|&nbsp;
+  <a href="https://www.ericzaworski.com/awards" target="_self">Awards</a>
+  &nbsp;|&nbsp;
+  <a href="https://www.ericzaworski.com/published" target="_self">Published</a>
+  &nbsp;|&nbsp;
+  <a href="https://www.ericzaworski.com/contact" target="_self">Contact</a>
+</nav>
+
+  <main>
+    <section class="section">
+      <h2>CLIO Awards</h2>
+      <ul>
+        <li>
+          <a href="https://clios.com/winners-gallery/details?id=138637" target="_blank" rel="noopener">Silver — Molson Canadian, Hockey Night in Canada Multilingual Edition</a>
+          <div class="meta">Year 2022 • Category Partnerships & Collaborations • Entrant Rethink Canada • Role Community Manager, OLIVER Agency</div>
+          <p class="meta">National campaign expanding HNIC broadcasts to multilingual audiences. Led social strategy, community engagement, and real-time activation.</p>
+        </li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>CLIO Sports</h2>
+      <ul>
+        <li>
+          <a href="https://clios.com/winners-gallery/details?id=127699" target="_blank" rel="noopener">Bronze — Molson Canadian, Stanley Cup Batch</a>
+          <div class="meta">Year 2021 • Category Product Innovation • Entrant Rethink Canada • Role Community Manager, OLIVER Agency</div>
+          <p class="meta">Contributed to digital storytelling and fan rollout for a collectible product line celebrating hockey heritage.</p>
+        </li>
+        <li><span class="meta">Shortlist — Molson Canadian, Stanley Cup Batch • Partnerships, Sponsorships & Collaborations</span></li>
+        <li><span class="meta">Shortlist — Molson Canadian, Hockey Night in Canada Multilingual Edition • Partnerships, Sponsorships & Collaborations</span></li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>The Marketing Awards (Brunico)</h2>
+      <ul>
+        <li>
+          <a href="https://marketingawards.strategyonline.ca/winners/winner/2022/?e=133384&u=Advertising&n=Hockey+Night+In+Canada%2C%3Cbr%3EMultilingual+Edition" target="_blank" rel="noopener">Gold — Hockey Night in Canada Multilingual Edition</a>
+          <div class="meta">Year 2022 • Category Branded Content • Entrants Rethink & Citizen Relations • Role Community Manager, Volt via OLIVER</div>
+          <p class="meta">Managed multilingual community engagement and real-time rollout across Molson Canadian channels.</p>
+        </li>
+        <li>
+          <a href="https://marketingawards.strategyonline.ca/winners/winner/2022/?e=133384&u=Advertising&n=Hockey+Night+In+Canada%2C%3Cbr%3EMultilingual+Edition" target="_blank" rel="noopener">Gold — Hockey Night in Canada Multilingual Edition</a>
+          <div class="meta">Category Community Building • Role Community Manager, Volt / OLIVER Agency</div>
+          <p class="meta">Recognized for impact with diverse audiences. Campaign results included 32M paid impressions and 55.5M earned impressions.</p>
+        </li>
+        <li>
+          <a href="https://marketingawards.strategyonline.ca/winners/winner/2022/?e=133384&u=Advertising&n=Hockey+Night+In+Canada%2C%3Cbr%3EMultilingual+Edition" target="_blank" rel="noopener">Silver — Hockey Night in Canada Multilingual Edition</a>
+          <div class="meta">Category Integrated Campaign Led by PR • Role Community Manager, Volt / OLIVER Agency</div>
+          <p class="meta">Integrated PR, digital, and social to elevate inclusivity and extend national reach.</p>
+        </li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>The Strategy Awards</h2>
+      <ul>
+        <li>
+          <a href="https://awards.strategyonline.ca/winners/winner/2022/?e=140527&n=Drink+from+the+Cup" target="_blank" rel="noopener">Bronze — Drink from the Cup</a>
+          <div class="meta">Year 2022 • Category Connection Strategy • Entrant Rethink Canada • Role Community Manager, Volt / OLIVER Agency</div>
+          <p class="meta">Digital engagement rollout for a national activation that sold over one million bottles and delivered a 27.8% sales lift.</p>
+        </li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Applied Arts Awards</h2>
+      <ul>
+        <li>
+          <a href="https://www.appliedartsmag.com/winners/advertising/molson-canadian-stanley-cup-batch-w558/?year=2021" target="_blank" rel="noopener">Winner — Stanley Cup Batch</a>
+          <div class="meta">Year 2021 • Category PR / Influencer • Entrant Rethink (Toronto / Montreal / Vancouver) • Role Community Manager, Volt / OLIVER</div>
+          <p class="meta">Social engagement and fan-community rollout across Molson Canadian channels, driving national excitement and coverage.</p>
+        </li>
+        <li>
+          <a href="https://www.appliedartsmag.com/winners/advertising/molson-hockey-night-in-canada-multilingual-edition-w546/?year=2021" target="_blank" rel="noopener">Winner — Hockey Night in Canada Multilingual Edition</a>
+          <div class="meta">Year 2021 • Category Corporate Responsibility • Entrant Rethink (Toronto / Montreal / Vancouver) • Role Community Manager, Volt / OLIVER</div>
+          <p class="meta">Multilingual engagement advancing inclusion through culturally sensitive communications and community management.</p>
+        </li>
+      </ul>
+    </section>
+  </main>
+
+  <!-- Clock -->
+  <div class="time-display" id="timeDisplay">
+    <span class="time-line">
+      <span class="name-full">Los Angeles</span><span class="name-code">LAX</span>:
+      <span id="la-hm">--:--</span><span class="secs">:<span id="la-s">--</span></span>
+      &nbsp;|&nbsp;
+      <span class="name-full">Toronto</span><span class="name-code">YYZ</span>:
+      <span id="to-hm">--:--</span><span class="secs">:<span id="to-s">--</span></span>
+      &nbsp;|&nbsp;
+      <span class="name-full">Kraków</span><span class="name-code">KRK</span>:
+      <span id="kr-hm">--:--</span><span class="secs">:<span id="kr-s">--</span></span>
+    </span>
+  </div>
+
+  <!-- Dark Mode -->
+  <div class="toggle-wrap" aria-label="Appearance">
+    <span class="toggle-label">Dark</span>
+    <div class="switch" id="themeSwitch" role="switch" aria-checked="false" tabindex="0"></div>
+  </div>
+
+  <script>
+    // Time helpers
+    function fmtHM(d, tz) { return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZone: tz }); }
+    function fmtS(d, tz)  { return d.toLocaleTimeString([], { second: '2-digit', timeZone: tz }); }
+    function updateTimes() {
+      const now = new Date();
+      document.getElementById('la-hm').textContent = fmtHM(now, 'America/Los_Angeles');
+      document.getElementById('la-s').textContent  = fmtS(now, 'America/Los_Angeles');
+      document.getElementById('to-hm').textContent = fmtHM(now, 'America/Toronto');
+      document.getElementById('to-s').textContent  = fmtS(now, 'America/Toronto');
+      document.getElementById('kr-hm').textContent = fmtHM(now, 'Europe/Warsaw');
+      document.getElementById('kr-s').textContent  = fmtS(now, 'Europe/Warsaw');
+    }
+    updateTimes();
+    setInterval(updateTimes, 1000);
+
+    // Dark mode (off by default; persisted)
+    const themeSwitch = document.getElementById('themeSwitch');
+    function applyTheme(dark, persist = true) {
+      document.body.classList.toggle('dark', dark);
+      themeSwitch.classList.toggle('on', dark);
+      themeSwitch.setAttribute('aria-checked', dark ? 'true' : 'false');
+      if (persist) { try { localStorage.setItem('theme-dark', dark ? '1' : '0'); } catch(e) {} }
+    }
+    (function initTheme(){
+      let saved = null;
+      try { saved = localStorage.getItem('theme-dark'); } catch(e) {}
+      applyTheme(saved === '1', false);
+    })();
+    function toggleTheme() {
+      const makeDark = !document.body.classList.contains('dark');
+      applyTheme(makeDark);
+    }
+    themeSwitch.addEventListener('click', toggleTheme);
+    themeSwitch.addEventListener('keydown', (e) => {
+      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggleTheme(); }
+    });
+  </script>
+</body>
+</html>
