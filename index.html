@@ -51,7 +51,7 @@
       flex-direction: column;
       justify-content: center;
       min-height: 100vh;
-      padding: 120px 20px 120px;
+      padding: 80px 20px 80px;
     }
 
     @keyframes fadeIn { to { opacity: 1; } }
@@ -345,11 +345,11 @@
   function updateTimes() {
     const now = new Date();
     document.getElementById('la-hm').textContent = fmtHM_LA.format(now);
-    document.getElementById('la-s').textContent  = fmtS_LA.format(now);
+    document.getElementById('la-s').textContent  = fmtS_LA.format(now).padStart(2, '0');
     document.getElementById('to-hm').textContent = fmtHM_TO.format(now);
-    document.getElementById('to-s').textContent  = fmtS_TO.format(now);
+    document.getElementById('to-s').textContent  = fmtS_TO.format(now).padStart(2, '0');
     document.getElementById('kr-hm').textContent = fmtHM_KR.format(now);
-    document.getElementById('kr-s').textContent  = fmtS_KR.format(now);
+    document.getElementById('kr-s').textContent  = fmtS_KR.format(now).padStart(2, '0');
   }
   updateTimes();
   setInterval(updateTimes, 1000);
