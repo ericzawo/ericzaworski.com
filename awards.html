@@ -13,14 +13,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Awards | Eric Zaworski</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
  <meta name="description" content="Discover the awards and recognitions earned by Eric Zaworski for his work in marketing and media.">
 <meta name="keywords" content="Eric Zaworski awards, marketing awards, recognitions, ezmedia achievements">
 <meta property="og:title" content="Awards | Eric Zaworski">
 <meta property="og:description" content="A showcase of awards and recognitions earned by marketing strategist Eric Zaworski, founder of ezmedia.">
 <meta property="og:url" content="https://www.ericzaworski.com/awards">
-<meta property="og:image" content="https://www.ericzaworski.com/images/og-image.jpg">
+<meta property="og:image" content="https://images.squarespace-cdn.com/content/v1/686e32c1b4eff3545c7156e5/4f310d7e-3e5a-415c-a1a0-6bf3e0dcece7/eric+zaworski+headshot+2025.jpeg?format=1500w">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://www.ericzaworski.com/awards">
+
+<!-- Prevent dark-mode flash: read localStorage before first paint -->
+<script>
+  try {
+    if (localStorage.getItem('theme-dark') === '1') {
+      document.documentElement.classList.add('dark');
+    }
+  } catch(e){}
+</script>
+
  <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -154,10 +165,8 @@
     /* Responsive */
     @media (max-width: 768px) {
       .header-nav {
-        position: fixed;
-      top: calc(10px + env(safe-area-inset-top, 0px));
-    left: 50%;
-    transform: translateX(-50%);
+        position: static;
+        transform: none;
         margin-bottom: 10px;
       }
       .time-display {

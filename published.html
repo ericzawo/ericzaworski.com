@@ -13,14 +13,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Published Works | Eric Zaworski</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
  <meta name="description" content="Explore articles and published work by Eric Zaworski across leading media outlets and platforms.">
 <meta name="keywords" content="Eric Zaworski published work, articles, journalism, marketing writing, publications">
 <meta property="og:title" content="Published Works | Eric Zaworski">
 <meta property="og:description" content="Explore articles and published work by marketing strategist and former journalist Eric Zaworski.">
 <meta property="og:url" content="https://www.ericzaworski.com/published">
-<meta property="og:image" content="https://www.ericzaworski.com/images/og-image.jpg">
+<meta property="og:image" content="https://images.squarespace-cdn.com/content/v1/686e32c1b4eff3545c7156e5/4f310d7e-3e5a-415c-a1a0-6bf3e0dcece7/eric+zaworski+headshot+2025.jpeg?format=1500w">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://www.ericzaworski.com/published">
+
+<!-- Prevent dark-mode flash: read localStorage before first paint -->
+<script>
+  try {
+    if (localStorage.getItem('theme-dark') === '1') {
+      document.documentElement.classList.add('dark');
+    }
+  } catch(e){}
+</script>
+
  <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -201,7 +212,7 @@
         <li><a href="https://www.complex.com/sneakers/a/eric-zaworski/asics-pensole-footwear-design-academy" target="_blank" rel="noopener">Recapping the ASICS “Fresh-Up” Gel-180 Masterclass Event at PENSOLE Footwear Design Academy</a></li>
         <li><a href="https://www.complex.com/style/a/eric-zaworski/photo-recap-drake-ovo-pop-up-shop-toronto" target="_blank" rel="noopener">A Photo Recap of the Drake and OVO Pop-Up Shop in Toronto</a></li>
         <li><a href="https://www.complex.com/music/a/eric-zaworski/dj-spinn-toronto-interview" target="_blank" rel="noopener">DJ Spinn Speaks on the Past, Present, and Future of TEKLIFE</a></li>
-        <li><a href="http://complex.com/style/a/james-harris/street-style-dipset-pop-up-shop-toronto" target="_blank" rel="noopener">Street Style at the Dipset Pop-Up Shop in Toronto</a></li>
+        <li><a href="https://complex.com/style/a/james-harris/street-style-dipset-pop-up-shop-toronto" target="_blank" rel="noopener">Street Style at the Dipset Pop-Up Shop in Toronto</a></li>
       </ul>
     </section>
 
@@ -213,7 +224,7 @@
         <li><a href="https://www.thefader.com/2016/04/23/serena-williams-cameo-beyonce-lemonade" target="_blank" rel="noopener">Serena Williams Makes A Cameo On Beyoncé's TV Special Lemonade</a></li>
         <li><a href="https://www.thefader.com/2016/03/30/anamanaguchi-release-capsule-silence-xxiv-a-video-game-album" target="_blank" rel="noopener">Bitpop Band Anamanaguchi Release Capsule Silence XXIV, A Video Game Album</a></li>
       </ul>
-      <p><a href="#" class="muted-link" id="faderToggle" onclick="toggleFader(event)">View all</a></p>
+      <p><a href="#" class="muted-link" id="faderToggle">View all</a></p>
       <ul id="faderAll" style="display:none;">
         <li><a href="https://www.thefader.com/2016/04/23/pharrell-and-scott-vener-dedicate-an-hour-mix-to-prince-on-othertone" target="_blank" rel="noopener">Pharrell And Scott Vener Dedicate A One Hour Mix To Prince On Their Beats 1 Show</a></li>
         <li><a href="https://www.thefader.com/2016/04/23/jay-electronica-says-a-collaboration-with-chance-the-rapper-is-coming" target="_blank" rel="noopener">Jay Electronica Says A Collaboration With Chance The Rapper Is Coming</a></li>
@@ -396,11 +407,11 @@
   function updateTimes() {
     const now = new Date();
     document.getElementById('la-hm').textContent = fmtHM_LA.format(now);
-    document.getElementById('la-s').textContent  = fmtS_LA.format(now);
+    document.getElementById('la-s').textContent  = fmtS_LA.format(now).padStart(2, '0');
     document.getElementById('to-hm').textContent = fmtHM_TO.format(now);
-    document.getElementById('to-s').textContent  = fmtS_TO.format(now);
+    document.getElementById('to-s').textContent  = fmtS_TO.format(now).padStart(2, '0');
     document.getElementById('kr-hm').textContent = fmtHM_KR.format(now);
-    document.getElementById('kr-s').textContent  = fmtS_KR.format(now);
+    document.getElementById('kr-s').textContent  = fmtS_KR.format(now).padStart(2, '0');
   }
   updateTimes();
   setInterval(updateTimes, 1000);
@@ -423,19 +434,18 @@
     document.documentElement.classList.toggle('dark', makeDark);
   }
   
-    function toggleFader(event) {
-  event.preventDefault();
-  const allList = document.getElementById('faderAll');
-  const toggleLink = document.getElementById('faderToggle');
-  if (allList.style.display === 'none' || allList.style.display === '') {
-    allList.style.display = 'block';
-    toggleLink.textContent = 'Hide';
-  } else {
-    allList.style.display = 'none';
-    toggleLink.textContent = 'View all';
-  }
-}
-themeSwitch.addEventListener('click', toggleTheme, { passive: true });
+  document.getElementById('faderToggle').addEventListener('click', function(event) {
+    event.preventDefault();
+    const allList = document.getElementById('faderAll');
+    if (allList.style.display === 'none' || allList.style.display === '') {
+      allList.style.display = 'block';
+      this.textContent = 'Hide';
+    } else {
+      allList.style.display = 'none';
+      this.textContent = 'View all';
+    }
+  });
+  themeSwitch.addEventListener('click', toggleTheme, { passive: true });
   themeSwitch.addEventListener('keydown', (e) => {
     if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggleTheme(); }
   });
