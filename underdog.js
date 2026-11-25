@@ -54,8 +54,8 @@
       thrown = true;
       turn++;
     }
-    function draw(point, scale = 1) {
-      sprite.style.transform = `translate(${point.x-27}px, calc(${point.y}px - 100%)) scale(${facing*scale}, ${scale})`;
+    function draw(point) {
+      sprite.style.transform = `translate(calc(${point.x}px - 50%), calc(${point.y}px - 100%)) scaleX(${facing})`;
     }
     const frameMs = 1000 / 60;
     const epoch = performance.now();
@@ -140,24 +140,24 @@
       stage.append(sprite);
       document.body.append(stage);
       if (motion.matches) {
-        await animate('look-up.png',350,() => draw(home(),.74));
+        await animate('look-up.png',350,() => draw(home()));
         if (target) markThrown();
         return;
       }
       if (!target) {
-        await animate('look-up.png',330,() => draw(home(),.84));
+        await animate('look-up.png',330,() => draw(home()));
         await animate('prance.gif',480,t => {
           const p = home();
-          draw({ x:p.x, y:p.y-9*Math.sin(Math.PI*t) },.86);
+          draw({ x:p.x, y:p.y-9*Math.sin(Math.PI*t) });
         });
         return;
       }
 
-      await animate('wake.gif',700,() => draw(home(),.86));
+      await animate('wake.gif',700,() => draw(home()));
       const rows = platforms();
       const rect = target.getBoundingClientRect();
       const side = rect.right+48 < innerWidth ? 1 : -1;
-      const grip = { x:side===1 ? rect.right+21 : rect.left-21, y:rect.top+rect.height/2+5 };
+      const grip = { x:side===1 ? rect.right+18 : rect.left-18, y:rect.top+rect.height/2+5 };
       // For targets below the fold, exit at the viewport edge and bring the
       // item back on screen. The reader's scroll position never changes.
       const pickup = { x:Math.max(27,Math.min(innerWidth-27,grip.x)),
@@ -183,7 +183,7 @@
       target.classList.add('tossed');
       const at = {x:pickup.x,y:Math.max(54,Math.min(innerHeight-28,pickup.y))};
       const placeToy = (p,angle=0) => {
-        const x = p.x-side*21-(side===1 ? rect.width : 0);
+        const x = p.x-side*18-(side===1 ? rect.width : 0);
         toy.style.transform = `translate(${x}px,${p.y-5-rect.height/2}px) rotate(${angle}deg)`;
       };
       await animate('bite.png',390,t => {
@@ -211,8 +211,7 @@
         const distance = returnPoint.x-landing.x;
         await animate('walk.gif',Math.max(550,distance*12),t => {
           const settle = Math.max(0,(t-.72)/.28);
-          draw({ x:landing.x+distance*t, y:landing.y+(returnPoint.y-landing.y)*settle },
-            1-.26*settle);
+          draw({ x:landing.x+distance*t, y:landing.y+(returnPoint.y-landing.y)*settle });
         });
       } else {
         await traverse(rows,returnPoint);

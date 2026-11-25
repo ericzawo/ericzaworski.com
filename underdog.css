@@ -1,9 +1,10 @@
+:root { --underdog-width: 46px; }
 .loyal { white-space: nowrap; }
 #underdog {
   display: inline-block;
   vertical-align: baseline;
   position: relative;
-  width: 40px;
+  width: var(--underdog-width);
   height: 24px;
   bottom: -4px;
   border: 0;
@@ -11,7 +12,7 @@
   cursor: pointer;
   border-radius: 4px;
 }
-#underdog img { position: absolute; bottom: 0; left: 0; }
+#underdog img { width: var(--underdog-width); height: auto; position: absolute; bottom: 0; left: 0; }
 #underdog:focus-visible { outline: 2px solid currentColor; }
 body.dark #underdog { color: white; }
 #underdog[aria-pressed="true"] picture { visibility: hidden; }
@@ -19,7 +20,7 @@ body.dark #underdog { color: white; }
   position: absolute;
   left: 0;
   top: 0;
-  width: 54px;
+  width: var(--underdog-width);
   height: auto;
   pointer-events: none;
   z-index: 800;
