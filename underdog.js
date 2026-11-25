@@ -1,6 +1,6 @@
 (() => {
   const button = document.querySelector('#underdog');
-  const targets = ['#chew-word', '#dapper-mark', '.toggle-wrap', '#portfolio-word', '#founding-year', '#previously-word'].map(s => document.querySelector(s));
+  const targets = ['#chew-word', '#dapper-mark', '.toggle-wrap', '#toronto-word', '#founding-year', '#previously-word'].map(s => document.querySelector(s));
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   const asset = name => 'assets/underdog/' + name;
   let turn = 0;
@@ -274,7 +274,7 @@
         const p = {x:at.x+3*shake,y:pickup.y+(at.y-pickup.y)*t+2*shake};
         draw(p); placeToy(p,side*20*shake);
       });
-      if (target.id === 'portfolio-word' || target.id === 'founding-year') {
+      if (target.id === 'toronto-word' || target.id === 'founding-year') {
         placeToy(at);
         await breakWord(toy,at,side,turn-3);
       } else {
