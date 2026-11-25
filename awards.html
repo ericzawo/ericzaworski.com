@@ -82,6 +82,10 @@
       z-index: 1000;
       pointer-events: auto;
     }
+    .header-nav span { margin-inline: 1ch; }
+    @media (max-width: 375px) {
+      .header-nav span { margin-inline: 0; }
+    }
     .header-nav a {
       color: var(--muted);
       font-weight: normal;
@@ -173,6 +177,7 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
+      body { opacity: 1; }
       * { animation: none !important; transition: none !important; }
     }
   </style>
@@ -181,11 +186,11 @@
 <!-- Floating Header -->
 <nav class="header-nav" role="navigation" aria-label="Primary">
   <a href="https://www.ericzaworski.com/" target="_self">Eric Zaworski</a>
-  &nbsp;|&nbsp;
+  <span aria-hidden="true">|</span>
   <a href="https://www.ericzaworski.com/awards" target="_self">Awards</a>
-  &nbsp;|&nbsp;
+  <span aria-hidden="true">|</span>
   <a href="https://www.ericzaworski.com/published" target="_self">Published</a>
-  &nbsp;|&nbsp;
+  <span aria-hidden="true">|</span>
   <a href="https://www.ericzaworski.com/contact" target="_self">Contact</a>
 </nav>
 
@@ -281,7 +286,7 @@
   <!-- Dark Mode -->
   <div class="toggle-wrap" aria-label="Appearance">
     <span class="toggle-label">Dark</span>
-    <div class="switch" id="themeSwitch" role="switch" aria-checked="false" tabindex="0"></div>
+    <div class="switch" id="themeSwitch" role="switch" aria-label="Dark mode" aria-checked="false" tabindex="0"></div>
   </div>
 
 <script>

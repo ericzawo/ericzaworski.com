@@ -81,6 +81,10 @@
       z-index: 1000;
       pointer-events: auto;
     }
+    .header-nav span { margin-inline: 1ch; }
+    @media (max-width: 375px) {
+      .header-nav span { margin-inline: 0; }
+    }
     .header-nav a {
       color: var(--muted);
       font-weight: normal;
@@ -165,10 +169,11 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
+      body { opacity: 1; }
       * { animation: none !important; transition: none !important; }
     }
 
-    .muted-link { font-weight: normal; color: var(--muted); cursor: pointer; }
+    .muted-link { background: transparent; border: 0; font: inherit; color: var(--muted); cursor: pointer; }
     .muted-link:hover { color: var(--fg); }
   </style>
 </head>
@@ -176,11 +181,11 @@
 <!-- Floating Header -->
 <nav class="header-nav" role="navigation" aria-label="Primary">
   <a href="https://www.ericzaworski.com/" target="_self">Eric Zaworski</a>
-  &nbsp;|&nbsp;
+  <span aria-hidden="true">|</span>
   <a href="https://www.ericzaworski.com/awards" target="_self">Awards</a>
-  &nbsp;|&nbsp;
+  <span aria-hidden="true">|</span>
   <a href="https://www.ericzaworski.com/published" target="_self">Published</a>
-  &nbsp;|&nbsp;
+  <span aria-hidden="true">|</span>
   <a href="https://www.ericzaworski.com/contact" target="_self">Contact</a>
 </nav>
 
@@ -205,8 +210,8 @@
         <li><a href="https://www.thefader.com/2016/04/23/serena-williams-cameo-beyonce-lemonade" target="_blank" rel="noopener">Serena Williams Makes A Cameo On Beyoncé's TV Special Lemonade</a></li>
         <li><a href="https://www.thefader.com/2016/03/30/anamanaguchi-release-capsule-silence-xxiv-a-video-game-album" target="_blank" rel="noopener">Bitpop Band Anamanaguchi Release Capsule Silence XXIV, A Video Game Album</a></li>
       </ul>
-      <p><a href="#" class="muted-link" id="faderToggle" onclick="toggleFader(event)">View all</a></p>
-      <ul id="faderAll" style="display:none;">
+      <p><button type="button" class="muted-link" id="faderToggle" aria-expanded="false" aria-controls="faderAll">View all</button></p>
+      <ul id="faderAll" hidden>
         <li><a href="https://www.thefader.com/2016/04/23/pharrell-and-scott-vener-dedicate-an-hour-mix-to-prince-on-othertone" target="_blank" rel="noopener">Pharrell And Scott Vener Dedicate A One Hour Mix To Prince On Their Beats 1 Show</a></li>
         <li><a href="https://www.thefader.com/2016/04/23/jay-electronica-says-a-collaboration-with-chance-the-rapper-is-coming" target="_blank" rel="noopener">Jay Electronica Says A Collaboration With Chance The Rapper Is Coming</a></li>
         <li><a href="https://www.thefader.com/2016/04/23/the-yeah-yeah-yeahs-played-a-surprise-set-in-new-york-last-night" target="_blank" rel="noopener">The Yeah Yeah Yeahs Played A Surprise Set In New York Last Night</a></li>
@@ -359,7 +364,7 @@
   <!-- Dark Mode -->
   <div class="toggle-wrap" aria-label="Appearance">
     <span class="toggle-label">Dark</span>
-    <div class="switch" id="themeSwitch" role="switch" aria-checked="false" tabindex="0"></div>
+    <div class="switch" id="themeSwitch" role="switch" aria-label="Dark mode" aria-checked="false" tabindex="0"></div>
   </div>
 
   <script>
@@ -415,19 +420,15 @@
     document.documentElement.classList.toggle('dark', makeDark);
   }
   
-    function toggleFader(event) {
-  event.preventDefault();
-  const allList = document.getElementById('faderAll');
-  const toggleLink = document.getElementById('faderToggle');
-  if (allList.style.display === 'none' || allList.style.display === '') {
-    allList.style.display = 'block';
-    toggleLink.textContent = 'Hide';
-  } else {
-    allList.style.display = 'none';
-    toggleLink.textContent = 'View all';
-  }
-}
-themeSwitch.addEventListener('click', toggleTheme, { passive: true });
+  const faderToggle = document.getElementById('faderToggle');
+  const faderAll = document.getElementById('faderAll');
+  faderToggle.addEventListener('click', () => {
+    faderAll.hidden = !faderAll.hidden;
+    faderToggle.setAttribute('aria-expanded', String(!faderAll.hidden));
+    faderToggle.textContent = faderAll.hidden ? 'View all' : 'Hide';
+  });
+
+  themeSwitch.addEventListener('click', toggleTheme, { passive: true });
   themeSwitch.addEventListener('keydown', (e) => {
     if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggleTheme(); }
   });
