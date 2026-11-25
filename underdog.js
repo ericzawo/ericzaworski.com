@@ -1,6 +1,6 @@
 (() => {
   const button = document.querySelector('#underdog');
-  const targets = ['#chew-word', '#dapper-mark', '.toggle-wrap'].map(s => document.querySelector(s));
+  const targets = ['#chew-word', '#dapper-mark', '.toggle-wrap', '#portfolio-word', '#founding-year', '#previously-word'].map(s => document.querySelector(s));
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   const asset = name => 'assets/underdog/' + name;
   let turn = 0;
@@ -129,6 +129,69 @@
       }
     }
 
+    async function breakWord(toy, at, side, kind) {
+      const node = toy.firstChild;
+      const range = document.createRange();
+      // Freeze each glyph at its rendered position before separating the pieces.
+      const pieces = Array.from(node.textContent, (letter, index) => {
+        range.setStart(node,index);
+        range.setEnd(node,index+1);
+        const rect = range.getBoundingClientRect();
+        const piece = document.createElement('span');
+        piece.className = 'dog-fragment';
+        piece.textContent = letter;
+        piece.style.font = toy.style.font;
+        piece.style.lineHeight = rect.height+'px';
+        piece.style.left = rect.left+'px';
+        piece.style.top = rect.top+'px';
+        stage.prepend(piece);
+        return piece;
+      });
+      toy.remove();
+      await animate(kind===1 ? 'prance.gif' : 'bite.png',820,t => {
+        draw({x:at.x,y:at.y-(kind===1 ? 12*Math.max(0,1-t*5) : 0)});
+        pieces.forEach((piece,i) => {
+          const middle = i-(pieces.length-1)/2;
+          let x,y,angle;
+          if (kind===0) { // Tear the word into two halves, then shed the letters.
+            const dir = Math.sign(middle)||1;
+            x = dir*(26+7*Math.abs(middle))*t;
+            y = -48*t*(1-t)+90*t*t;
+            angle = dir*(30+i*8)*t;
+          } else if (kind===1) { // Scatter the digits like kicked pebbles.
+            x = middle*45*t;
+            y = -(145+20*(i%2))*t+245*t*t;
+            angle = middle*145*t;
+          } else { // Tip the letters over in a domino wave.
+            const fall = Math.max(0,Math.min(1,2.2*t-i/pieces.length));
+            x = side*15*fall;
+            y = 48*fall*fall;
+            angle = side*100*fall;
+          }
+          piece.style.transform = `translate(${x}px,${y}px) rotate(${angle}deg)`;
+          piece.style.opacity = String(Math.min(1,(1-t)*5));
+        });
+      });
+    }
+
+    async function think() {
+      const message = "Don't you have anything better to do?";
+      const bubble = document.createElement('div');
+      bubble.className = 'dog-thought';
+      bubble.textContent = message;
+      stage.append(bubble);
+      const bed = home();
+      const left = Math.max(8, Math.min(innerWidth-bubble.offsetWidth-8,bed.x-bubble.offsetWidth/2));
+      bubble.style.left = left+'px';
+      bubble.style.top = Math.max(4,bed.y-50-bubble.offsetHeight)+'px';
+      bubble.style.setProperty('--tail', (bed.x-left)+'px');
+      const status = document.querySelector('#dog-status');
+      status.textContent = message;
+      try {
+        await animate('look-up.png',4200,() => draw(bed));
+      } finally { status.textContent = ''; }
+    }
+
     try {
       await Promise.all(['wake.gif','walk.gif','trot.gif','prance.gif','bite.png','look-up.png'].map(pose => {
         const image = new Image();
@@ -139,17 +202,13 @@
       button.setAttribute('aria-pressed','true');
       stage.append(sprite);
       document.body.append(stage);
-      if (motion.matches) {
-        await animate('look-up.png',350,() => draw(home()));
-        if (target) markThrown();
+      if (!target) {
+        await think();
         return;
       }
-      if (!target) {
-        await animate('look-up.png',330,() => draw(home()));
-        await animate('prance.gif',480,t => {
-          const p = home();
-          draw({ x:p.x, y:p.y-9*Math.sin(Math.PI*t) });
-        });
+      if (motion.matches) {
+        await animate('look-up.png',350,() => draw(home()));
+        markThrown();
         return;
       }
 
@@ -191,11 +250,16 @@
         const p = {x:at.x+3*shake,y:pickup.y+(at.y-pickup.y)*t+2*shake};
         draw(p); placeToy(p,side*20*shake);
       });
-      await animate('look-up.png',420,t => {
-        draw(at);
-        placeToy({x:at.x+side*innerWidth*.55*t,y:at.y-220*t*(1-t)+32*t},side*300*t);
-        toy.style.opacity = String(Math.min(1,(1-t)*5));
-      });
+      if (turn >= 3) {
+        placeToy(at);
+        await breakWord(toy,at,side,turn-3);
+      } else {
+        await animate('look-up.png',420,t => {
+          draw(at);
+          placeToy({x:at.x+side*innerWidth*.55*t,y:at.y-220*t*(1-t)+32*t},side*300*t);
+          toy.style.opacity = String(Math.min(1,(1-t)*5));
+        });
+      }
       markThrown();
       toy.remove();
       feet = at;
