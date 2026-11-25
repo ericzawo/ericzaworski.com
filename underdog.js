@@ -30,8 +30,59 @@
     return rows;
   }
 
+  const thoughts = [
+    "Don't you have anything better to do?",
+    "You’re barking up the wrong homepage.",
+    "I was told this was a non-clickable role.",
+    "Technically, this counts as engagement.",
+    "You saw me throw a button and thought, ‘Let’s give him another one.’",
+    "I have a meeting at treat.",
+    "Thank you for scrolling."
+  ];
+  const bubble = document.createElement('span');
+  bubble.className = 'dog-thought';
+  bubble.setAttribute('aria-hidden','true');
+  let nextThought = 0;
+  let bedtime;
+
+  function positionThought() {
+    if (!bubble.isConnected) return;
+    const bed = button.getBoundingClientRect();
+    const center = bed.left + bed.width / 2;
+    const left = Math.max(8, Math.min(innerWidth-bubble.offsetWidth-8, center-bubble.offsetWidth/2));
+    bubble.style.left = (left-bed.left)+'px';
+    bubble.style.setProperty('--tail', (center-left)+'px');
+  }
+
+  function think() {
+    if (nextThought === thoughts.length) return;
+    clearTimeout(bedtime);
+    const message = thoughts[nextThought++];
+    const status = document.querySelector('#dog-status');
+    const img = button.querySelector('img');
+    const source = button.querySelector('source');
+    img.src = source.srcset = asset('look-up.png');
+    bubble.textContent = status.textContent = message;
+    button.append(bubble);
+    positionThought();
+    if (nextThought === thoughts.length) {
+      button.setAttribute('aria-disabled','true');
+      button.title = button.ariaLabel = message;
+      return;
+    }
+    button.title = button.ariaLabel = 'Hear another thought';
+    bedtime = setTimeout(() => {
+      bubble.remove();
+      status.textContent = '';
+      img.src = asset('sleep.gif');
+      source.srcset = asset('sleep.png');
+    }, Math.max(4200, message.length*85));
+  }
+
+  window.addEventListener('resize', positionThought);
   async function play() {
     if (playing) return;
+    if (turn === targets.length) return think();
     playing = true;
     controller = new AbortController();
     const { signal } = controller;
@@ -169,24 +220,6 @@
       });
     }
 
-    async function think() {
-      const message = "Don't you have anything better to do?";
-      const bubble = document.createElement('div');
-      bubble.className = 'dog-thought';
-      bubble.textContent = message;
-      stage.append(bubble);
-      const bed = home();
-      const left = Math.max(8, Math.min(innerWidth-bubble.offsetWidth-8,bed.x-bubble.offsetWidth/2));
-      bubble.style.left = left+'px';
-      bubble.style.top = Math.max(4,bed.y-50-bubble.offsetHeight)+'px';
-      bubble.style.setProperty('--tail', (bed.x-left)+'px');
-      const status = document.querySelector('#dog-status');
-      status.textContent = message;
-      try {
-        await animate('look-up.png',4200,() => draw(bed));
-      } finally { status.textContent = ''; }
-    }
-
     try {
       await Promise.all(['wake.gif','walk.gif','trot.gif','prance.gif','bite.png','look-up.png'].map(pose => {
         const image = new Image();
@@ -197,10 +230,6 @@
       button.setAttribute('aria-pressed','true');
       stage.append(sprite);
       document.body.append(stage);
-      if (!target) {
-        await think();
-        return;
-      }
       if (motion.matches) {
         await animate('look-up.png',350,() => draw(home()));
         markThrown();
