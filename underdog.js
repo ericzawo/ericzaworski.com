@@ -58,7 +58,7 @@
     sprite.className = 'underdog-visitor';
     sprite.alt = '';
     sprite.src = asset('wake.gif');
-    const poses = ['walk.gif', 'trot.gif', 'bite.png', 'look-up.png'].map(name => {
+    const poses = ['walk.gif', 'trot.gif', 'prance.gif', 'bite.png', 'look-up.png'].map(name => {
       const image = new Image();
       image.src = asset(name);
       return image;
@@ -86,7 +86,7 @@
     // The bow's mouth sits 21px left of center and 5px above the feet at display size.
     const grip = { x: label.right + 21, y: label.top + label.height / 2 + 5 };
     if (label.top > 50 && label.bottom < innerHeight) {
-      step(grip, 650, 28, 'trot.gif', 1);
+      step(grip, 650, 28, 'prance.gif', 1);
       step(grip, 230, 0, 'bite.png', 1, 'bite');
       step({ x: grip.x + 12, y: grip.y - 5 }, 750, 0, 'bite.png', 1, 'shake');
       step(position, 740, 0, 'look-up.png', 1, 'throw');
@@ -95,10 +95,11 @@
     for (const ledge of nearbyLedges(home)) {
       const startLeft = Math.abs(position.x - ledge.left) < Math.abs(position.x - ledge.right);
       const start = { x: startLeft ? ledge.left : ledge.right, y: ledge.y };
-      const end = { x: startLeft ? ledge.right : ledge.left, y: ledge.y };
+      const distance = Math.min(145, ledge.right - ledge.left);
+      const end = { x: start.x + (startLeft ? distance : -distance), y: ledge.y };
       step(start, 600, 34, 'walk.gif', 1);
       const trotting = ledgeIndex++ % 2 === 1;
-      step(end, Math.max(700, Math.abs(end.x - start.x) * (trotting ? 5 : 9)),
+      step(end, Math.max(700, Math.abs(end.x - start.x) * (trotting ? 16 : 30)),
         0, trotting ? 'trot.gif' : 'walk.gif', 1);
       step(end, 600, 0, 'look-up.png', 1);
     }

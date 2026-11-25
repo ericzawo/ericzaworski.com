@@ -37,10 +37,14 @@ body.dark #underdog { color: white; }
   z-index: 799;
   transform-origin: right center;
 }
-.conway-wordmark {
-  display: inline-block;
-  width: 83px;
-  height: auto;
-  vertical-align: -.1em;
+@font-face {
+  font-family: Gaegu;
+  src: url("assets/fonts/gaegu-bold.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
 }
-body.dark .conway-wordmark { filter: invert(1); }
+.loyal-name {
+  font: 700 21px/1 Gaegu, cursive;
+  letter-spacing: 0;
+}
