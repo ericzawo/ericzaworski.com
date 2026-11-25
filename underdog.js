@@ -57,21 +57,29 @@
     function draw(point, scale = 1) {
       sprite.style.transform = `translate(${point.x-27}px, calc(${point.y}px - 100%)) scale(${facing*scale}, ${scale})`;
     }
+    const frameMs = 1000 / 30;
+    const epoch = performance.now();
+    let paintedFrame = -1;
     function animate(pose, duration, render) {
       signal.throwIfAborted();
-      sprite.src = asset(pose);
+
       return new Promise((resolve, reject) => {
         let id;
-        const begin = performance.now();
+        const frames = Math.max(1, Math.round(duration / frameMs));
+        const start = Math.max(paintedFrame, Math.floor((performance.now()-epoch)/frameMs));
         function cancel() { cancelAnimationFrame(id); reject(signal.reason); }
         signal.addEventListener('abort', cancel, { once: true });
         function tick(now) {
-          const t = Math.min(1, Math.max(0, (now-begin)/duration));
+          const frame = Math.floor((now-epoch)/frameMs);
+          if (frame <= paintedFrame) { id = requestAnimationFrame(tick); return; }
+          paintedFrame = frame;
+          if (sprite.getAttribute('src') !== asset(pose)) sprite.src = asset(pose);
+          const t = Math.min(1, Math.max(0, (frame-start)/frames));
           render(t);
           if (t < 1) id = requestAnimationFrame(tick);
           else { signal.removeEventListener('abort', cancel); resolve(); }
         }
-        tick(begin);
+        id = requestAnimationFrame(tick);
       });
     }
     let feet = home();
@@ -79,33 +87,43 @@
       const from = feet;
       const dx = to.x-from.x, dy = to.y-from.y;
       if (dx) facing = dx>0 ? -1 : 1;
-      const gravity = 3800;
-      const rise = Math.max(0,-dy)+10+Math.min(13,Math.abs(dx)*.08);
-      const velocity = Math.sqrt(2*gravity*rise);
-      const duration = (velocity+Math.sqrt(2*gravity*(rise+dy)))/gravity;
-      await animate('prance.gif',duration*1000,t => {
-        const time = duration*t;
-        draw({x:from.x+dx*t,y:from.y-velocity*time+gravity*time*time/2});
+      // A running leap clears the upper platform, then falls faster than it rose.
+      const clearance = Math.min(48, 22 + Math.abs(dx)*.16);
+      const rise = Math.max(0, -dy) + clearance;
+      const up = Math.sqrt(2*rise/2800);
+      const down = Math.sqrt(2*(rise+dy)/5100);
+      await animate('prance.gif',(up+down)*1000,t => {
+        const time = t*(up+down);
+        const y = time < up ? from.y-rise+1400*(up-time)**2
+          : from.y-rise+2550*(time-up)**2;
+        draw({x:Math.round(from.x+dx*t),y:Math.round(y)});
       });
       feet = to;
-      await animate('walk.gif',70,() => draw(to));
     }
-    async function traverse(rows,dest,limit) {
-      for (let i=0;i<limit;i++) {
-        const sign = Math.sign(dest.y-feet.y);
-        const candidates = rows.filter(r => (r.y-feet.y)*sign>8 && (r.y-dest.y)*sign<4);
-        if (!candidates.length) break;
-        const landX = r => Math.max(r.left,Math.min(r.right,feet.x));
-        const cost = r => Math.abs(r.y-feet.y)+Math.abs(landX(r)-feet.x)*.45;
-        candidates.sort((a,b) => cost(a)-cost(b));
+    async function traverse(rows,dest) {
+      const lineHeight = parseFloat(getComputedStyle(button.closest('p')).lineHeight);
+      const stride = 3*lineHeight;
+      for (let leap=0; leap<3; leap++) {
+        const vertical = dest.y-feet.y;
+        if (Math.abs(vertical)<stride*1.45) return;
+        const sign = Math.sign(vertical);
+        const dir = dest.x >= feet.x ? 1 : -1;
+        const aim = feet.x + dir*Math.min(115,Math.max(52,Math.abs(dest.x-feet.x)*.5));
+        const landingX = row => Math.max(row.left,Math.min(row.right,aim));
+        const candidates = rows.filter(row => (row.y-feet.y)*sign >= stride*.76
+          && (dest.y-row.y)*sign >= lineHeight*1.25);
+        if (!candidates.length) return;
+        const score = row => Math.abs(row.y-feet.y-sign*stride)
+          + Math.abs(landingX(row)-aim)*.35;
+        candidates.sort((a,b) => score(a)-score(b));
         const row = candidates[0];
-        await jump({x:landX(row),y:row.y});
-        const start = feet.x;
-        const dir = dest.x<start ? -1 : 1;
-        const end = Math.max(row.left,Math.min(row.right,start+dir*48));
-        if (Math.abs(end-start)>3) {
-          facing = end>start ? -1 : 1;
-          await animate('trot.gif',Math.abs(end-start)*8,t => draw({x:start+(end-start)*t,y:row.y}));
+        const start = landingX(row);
+        await jump({x:start,y:row.y});
+        const end = Math.max(row.left,Math.min(row.right,start+dir*38));
+        if (Math.abs(end-start)>4) {
+          facing = dir>0 ? -1 : 1;
+          const gait = turn === 0 ? 'walk.gif' : 'trot.gif';
+          await animate(gait,Math.abs(end-start)*5,t => draw({x:Math.round(start+(end-start)*t),y:row.y}));
           feet = {x:end,y:row.y};
         }
       }
@@ -145,11 +163,13 @@
       const pickup = { x:Math.max(27,Math.min(innerWidth-27,grip.x)),
         y:Math.max(-5,Math.min(innerHeight+46,grip.y)) };
       const returnPoint = home();
-      // Visit a neighboring row first even when the heading is beside the dog.
-      const opposite = rows.filter(r => (r.y-feet.y)*Math.sign(feet.y-pickup.y)>10)
-        .sort((a,b) => Math.abs(a.y-feet.y)-Math.abs(b.y-feet.y))[0];
-      if (opposite) await jump({x:Math.max(opposite.left,Math.min(feet.x,opposite.right)),y:opposite.y});
-      await traverse(rows,pickup,5);
+      // Give the short first trip a run-up. Later trips head straight toward the target.
+      if (turn === 0) {
+        const row = rows.filter(r => r.y-feet.y>48 && r.y-feet.y<110)
+          .sort((a,b) => Math.abs(a.y-feet.y-72)-Math.abs(b.y-feet.y-72))[0];
+        if (row) await jump({x:Math.max(row.left,Math.min(row.right,feet.x+75)),y:row.y});
+      }
+      await traverse(rows,pickup);
       await jump(pickup);
       facing = side;
       toy = target.cloneNode(true);
@@ -179,7 +199,7 @@
       markThrown();
       toy.remove();
       feet = at;
-      await traverse(rows,returnPoint,5);
+      await traverse(rows,returnPoint);
       await jump(returnPoint);
     } catch (error) {
       if (!signal.aborted) console.error('Underdog animation failed',error);
