@@ -158,15 +158,10 @@
             x = dir*(26+7*Math.abs(middle))*t;
             y = -48*t*(1-t)+90*t*t;
             angle = dir*(30+i*8)*t;
-          } else if (kind===1) { // Scatter the digits like kicked pebbles.
+          } else { // Scatter the digits like kicked pebbles.
             x = middle*45*t;
             y = -(145+20*(i%2))*t+245*t*t;
             angle = middle*145*t;
-          } else { // Tip the letters over in a domino wave.
-            const fall = Math.max(0,Math.min(1,2.2*t-i/pieces.length));
-            x = side*15*fall;
-            y = 48*fall*fall;
-            angle = side*100*fall;
           }
           piece.style.transform = `translate(${x}px,${y}px) rotate(${angle}deg)`;
           piece.style.opacity = String(Math.min(1,(1-t)*5));
@@ -250,7 +245,7 @@
         const p = {x:at.x+3*shake,y:pickup.y+(at.y-pickup.y)*t+2*shake};
         draw(p); placeToy(p,side*20*shake);
       });
-      if (turn >= 3) {
+      if (target.id === 'portfolio-word' || target.id === 'founding-year') {
         placeToy(at);
         await breakWord(toy,at,side,turn-3);
       } else {

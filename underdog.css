@@ -42,17 +42,9 @@ body.dark #underdog { color: white; }
 }
 .conway-wordmark {
   display: inline-block;
-  width: 83px;
+  width: 173px;
   height: auto;
   vertical-align: -.1em;
-}
-/* The underscore begins at column 468 of the 538px wordmark. */
-@keyframes conway-cursor {
-  0%, 100% { clip-path: inset(0); }
-  50% { clip-path: inset(0 13.1% 0 0); }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .conway-wordmark { animation: conway-cursor 1.2s steps(1, end) infinite; }
 }
 body.dark .conway-wordmark { filter: invert(1); }
 #dapper-mark { display: inline-block; }
@@ -105,6 +97,6 @@ body.dark .conway-wordmark { filter: invert(1); }
   width: 7px;
   height: 5px;
 }
-.dog-thought::after { bottom: -13px; margin-left: -3px; width: 3px; height: 3px; }
+.dog-thought::after { bottom: -10px; margin-left: -3px; width: 3px; height: 3px; }
 @keyframes dog-thinks { from { opacity: 0; transform: translateY(4px); } }
 .dog-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
