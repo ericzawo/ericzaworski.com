@@ -83,12 +83,12 @@
       });
     }
     let feet = home();
-    async function jump(to) {
+    async function jump(to, clearance) {
       const from = feet;
       const dx = to.x-from.x, dy = to.y-from.y;
       if (dx) facing = dx>0 ? -1 : 1;
       // A running leap clears the upper platform, then falls faster than it rose.
-      const clearance = Math.min(48, 22 + Math.abs(dx)*.16);
+      clearance ??= Math.min(48, 22 + Math.abs(dx)*.16);
       const rise = Math.max(0, -dy) + clearance;
       const up = Math.sqrt(2*rise/2800);
       const down = Math.sqrt(2*(rise+dy)/5100);
@@ -209,10 +209,12 @@
         await jump(landing);
         facing = -1;
         const distance = returnPoint.x-landing.x;
-        await animate('walk.gif',Math.max(550,distance*12),t => {
-          const settle = Math.max(0,(t-.72)/.28);
-          draw({ x:landing.x+distance*t, y:landing.y+(returnPoint.y-landing.y)*settle });
+        const runUp = Math.max(0,distance-Math.min(38,distance*.6));
+        await animate('walk.gif',Math.max(100,runUp*8),t => {
+          draw({ x:landing.x+runUp*t, y:landing.y });
         });
+        feet = { x:landing.x+runUp, y:landing.y };
+        await jump(returnPoint,12);
       } else {
         await traverse(rows,returnPoint);
         await jump(returnPoint);
