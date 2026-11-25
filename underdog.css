@@ -42,7 +42,8 @@ body.dark #underdog { color: white; }
 }
 .conway-wordmark {
   display: inline-block;
-  width: 173px;
+  /* Reserve room for the role and trailing comma on narrow screens. */
+  width: clamp(90px, calc(100% - 13.25em), 173px);
   height: auto;
   vertical-align: -.1em;
 }
