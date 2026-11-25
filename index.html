@@ -139,6 +139,10 @@
       z-index: 1000;
       pointer-events: auto;
     }
+    .header-nav span { margin-inline: 1ch; }
+    @media (max-width: 375px) {
+      .header-nav span { margin-inline: 0; }
+    }
     .header-nav a {
       color: var(--muted);
       font-weight: normal;
@@ -233,11 +237,11 @@
 <!-- Floating Header -->
 <nav class="header-nav" role="navigation" aria-label="Primary">
   <a href="https://ericzaworski.com/" target="_self">Eric Zaworski</a>
-  &nbsp;|&nbsp;
+  <span aria-hidden="true">|</span>
   <a href="https://ericzaworski.com/awards" target="_self">Awards</a>
-  &nbsp;|&nbsp;
+  <span aria-hidden="true">|</span>
   <a href="https://ericzaworski.com/published" target="_self">Published</a>
-  &nbsp;|&nbsp;
+  <span aria-hidden="true">|</span>
   <a href="https://ericzaworski.com/contact" target="_self">Contact</a>
 </nav>
 
@@ -284,14 +288,14 @@
                style="height: 18px;"
                decoding="async"
                fetchpriority="high">
-        </a>. He's worked with <a id="dapper-mark" href="https://www.dapperlabs.com/" target="_blank" rel="noopener">
+        </a>. He's also worked with <a id="dapper-mark" href="https://www.dapperlabs.com/" target="_blank" rel="noopener">
         <img src="assets/dapper.png" width="338" height="72"
              alt="Dapper Labs"
              class="company-logo"
              decoding="async"
              loading="lazy">
       </a>
-      in roles across brand, growth, and performance media. He was also a community manager at OLIVER Agency,
+      in roles across brand, growth, and performance marketing. He was also a community manager at OLIVER Agency,
       working on <a href="https://www.molsoncoorsblog.com/av?url=https://www.molsoncoorsblog.com/volt-studio-in-house-agency-ana" target="_blank" rel="noopener">
         <img src="https://i.imgur.com/DHAQdRQ.png"
              alt="Molson Coors Beverage Company"
@@ -315,7 +319,7 @@
   <section class="section">
     <div class="section-title">Also —</div>
     <p>
-      He writes about marketing, culture and creative business. He's on
+      He sometimes writes about marketing, business and culture. He's on
       <a href="https://twitter.com/ericzawo" target="_blank" rel="noopener">Twitter</a>,
       <a href="https://ezmedia.substack.com/welcome" target="_blank" rel="noopener">Substack</a>,
       <a href="https://www.linkedin.com/in/eric-zaworski/" target="_blank" rel="noopener">LinkedIn</a>, and
@@ -343,7 +347,7 @@
 <!-- Dark Mode -->
 <div class="toggle-wrap" aria-label="Appearance">
   <span class="toggle-label">Dark</span>
-  <div class="switch" id="themeSwitch" role="switch" aria-checked="false" tabindex="0"></div>
+  <div class="switch" id="themeSwitch" role="switch" aria-label="Dark mode" aria-checked="false" tabindex="0"></div>
 </div>
 
 <!-- Defer non-critical JS work -->

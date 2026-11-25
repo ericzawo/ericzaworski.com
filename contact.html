@@ -73,6 +73,10 @@ body.dark a { color: #fff; }
   text-align: center;
   z-index: 1000;
 }
+.header-nav span { margin-inline: 1ch; }
+@media (max-width: 375px) {
+  .header-nav span { margin-inline: 0; }
+}
 .header-nav a {
   color: var(--muted);
   font-weight: normal;
@@ -186,9 +190,9 @@ body.dark .switch.on { background: #16a34a; }
 </head>
 <body>
 <nav class="header-nav" aria-label="Primary">
-  <a href="https://ericzaworski.com/">Eric Zaworski</a> &nbsp;|&nbsp;
-  <a href="https://ericzaworski.com/awards">Awards</a> &nbsp;|&nbsp;
-  <a href="https://ericzaworski.com/published">Published</a> &nbsp;|&nbsp;
+  <a href="https://ericzaworski.com/">Eric Zaworski</a> <span aria-hidden="true">|</span>
+  <a href="https://ericzaworski.com/awards">Awards</a> <span aria-hidden="true">|</span>
+  <a href="https://ericzaworski.com/published">Published</a> <span aria-hidden="true">|</span>
   <a href="https://ericzaworski.com/contact">Contact</a>
 </nav>
 
@@ -223,7 +227,7 @@ body.dark .switch.on { background: #16a34a; }
 <!-- Dark mode toggle -->
 <div class="toggle-wrap" aria-label="Appearance">
   <span class="toggle-label">Dark</span>
-  <div class="switch" id="themeSwitch" role="switch" aria-checked="false" tabindex="0"></div>
+  <div class="switch" id="themeSwitch" role="switch" aria-label="Dark mode" aria-checked="false" tabindex="0"></div>
 </div>
 
 <script>
