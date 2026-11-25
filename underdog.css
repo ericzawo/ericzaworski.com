@@ -29,3 +29,18 @@ body.dark #underdog { color: white; }
   body { opacity: 1; }
   #underdog[aria-pressed="true"] picture { visibility: visible; }
 }
+#chew-word.in-mouth { opacity: 0; }
+.underdog-toy {
+  position: fixed;
+  inset: 0 auto auto 0;
+  pointer-events: none;
+  z-index: 799;
+  transform-origin: right center;
+}
+.conway-wordmark {
+  display: inline-block;
+  width: 83px;
+  height: auto;
+  vertical-align: -.1em;
+}
+body.dark .conway-wordmark { filter: invert(1); }
