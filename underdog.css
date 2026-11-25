@@ -45,6 +45,14 @@ body.dark #underdog { color: white; }
   height: auto;
   vertical-align: -.1em;
 }
+/* The underscore begins at column 468 of the 538px wordmark. */
+@keyframes conway-cursor {
+  0%, 100% { clip-path: inset(0); }
+  50% { clip-path: inset(0 13.1% 0 0); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .conway-wordmark { animation: conway-cursor 1.2s steps(1, end) infinite; }
+}
 body.dark .conway-wordmark { filter: invert(1); }
 #dapper-mark { display: inline-block; }
 #chew-word { display: inline-block; }

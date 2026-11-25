@@ -57,7 +57,7 @@
     function draw(point, scale = 1) {
       sprite.style.transform = `translate(${point.x-27}px, calc(${point.y}px - 100%)) scale(${facing*scale}, ${scale})`;
     }
-    const frameMs = 1000 / 30;
+    const frameMs = 1000 / 60;
     const epoch = performance.now();
     let paintedFrame = -1;
     function animate(pose, duration, render) {
@@ -70,7 +70,7 @@
         function cancel() { cancelAnimationFrame(id); reject(signal.reason); }
         signal.addEventListener('abort', cancel, { once: true });
         function tick(now) {
-          const frame = Math.floor((now-epoch)/frameMs);
+          const frame = Math.floor((now-epoch+1)/frameMs);
           if (frame <= paintedFrame) { id = requestAnimationFrame(tick); return; }
           paintedFrame = frame;
           if (sprite.getAttribute('src') !== asset(pose)) sprite.src = asset(pose);
