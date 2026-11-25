@@ -199,8 +199,25 @@
       markThrown();
       toy.remove();
       feet = at;
-      await traverse(rows,returnPoint);
-      await jump(returnPoint);
+      if (target === targets[0]) {
+        // Land on the opening work paragraph, on the same wrapped line as the bed.
+        const loyal = button.parentElement.querySelector('a').getBoundingClientRect();
+        const line = rows.filter(row => Math.abs(row.y-(loyal.top+2))<8
+          && row.left<returnPoint.x && row.right>=returnPoint.x-165);
+        const left = Math.min(loyal.left,...line.map(row => row.left));
+        const landing = { x:Math.max(left,returnPoint.x-120), y:loyal.top+2 };
+        await jump(landing);
+        facing = -1;
+        const distance = returnPoint.x-landing.x;
+        await animate('walk.gif',Math.max(550,distance*12),t => {
+          const settle = Math.max(0,(t-.72)/.28);
+          draw({ x:landing.x+distance*t, y:landing.y+(returnPoint.y-landing.y)*settle },
+            1-.26*settle);
+        });
+      } else {
+        await traverse(rows,returnPoint);
+        await jump(returnPoint);
+      }
     } catch (error) {
       if (!signal.aborted) console.error('Underdog animation failed',error);
     } finally {
