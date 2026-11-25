@@ -75,6 +75,10 @@ body.dark .conway-wordmark { filter: invert(1); }
 }
 .dog-thought {
   position: absolute;
+  bottom: 50px;
+  white-space: normal;
+  pointer-events: none;
+  z-index: 801;
   width: max-content;
   max-width: min(210px, 85vw);
   padding: 9px 14px;
