@@ -14,10 +14,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Eric Zaworski</title>
 
-  <meta name="description" content="Eric Zaworski is a performance marketer on the growth team at Wispr Flow and founder of ezmedia, based in Los Angeles.">
+  <meta name="description" content="Eric Zaworski is the Head of Growth at Conway Research, the frontier AI lab building Loyal AI. He founded ezmedia and is based in Los Angeles.">
   <meta name="keywords" content="Eric Zaworski, performance marketing, Wispr Flow, ezmedia, growth marketing, paid social, creative strategy, Los Angeles, Toronto, Kraków">
   <meta property="og:title" content="Eric Zaworski">
-  <meta property="og:description" content="Performance marketer on the growth team at Wispr Flow. Founder of ezmedia. Based in Los Angeles.">
+  <meta property="og:description" content="Head of Growth at Conway Research, the frontier AI lab building Loyal AI. Founder of ezmedia. Based in Los Angeles.">
   <meta property="og:url" content="https://www.ericzaworski.com/">
   <meta property="og:image" content="https://placehold.co/1200x630/1a1a1a/ffffff?text=Eric+Zaworski&font=montserrat">
   <meta name="twitter:card" content="summary_large_image">
@@ -34,10 +34,10 @@
       "https://www.linkedin.com/in/eric-zaworski",
       "https://www.instagram.com/ericzawo"
     ],
-    "jobTitle": "Performance Marketing Manager",
+    "jobTitle": "Head of Growth",
     "worksFor": {
       "@type": "Organization",
-      "name": "Wispr Flow"
+      "name": "Conway Research"
     }
   }
   </script>
@@ -204,14 +204,6 @@
     body.dark .switch.on { background: #16a34a; }
     .toggle-label { font-size: 12px; color: var(--muted); }
 
-    /* Progressive rendering: offscreen sections render when scrolled into view */
-    main > .section:nth-of-type(n+2),
-    .time-display,
-    .toggle-wrap {
-      content-visibility: auto;
-      contain-intrinsic-size: 1px 400px; /* reserve space, no CLS */
-    }
-
     /* Responsive */
     @media (max-width: 768px) {
       .header-nav {
@@ -240,6 +232,8 @@
       * { animation: none !important; transition: none !important; }
     }
   </style>
+  <link rel="stylesheet" href="underdog.css">
+  <script src="underdog.js" defer></script>
 </head>
 <body>
 <!-- Floating Header -->
@@ -255,33 +249,25 @@
 
 <main>
   <section class="section">
-    <h1>
-      Eric Zaworski is a performance marketer who helps startups and brands grow through paid advertising and creative strategy. He's based in Los Angeles, splitting his time between LA, Toronto and Kraków.
-    </h1>
+    <h1>Eric Zaworski is a performance marketer.</h1>
+    <p>He's based in Los Angeles, splitting his time between LA, Toronto and Kraków.</p>
     <div class="contact-info">
-      <p>Portfolio link and résumé available upon request.</p>
+      <p><span id="portfolio-word">Portfolio</span> link and résumé available upon request.</p>
       <p>Email: <a href="mailto:eric@ez.media">eric@ez.media</a></p>
     </div>
   </section>
 
   <section class="section">
-    <div class="section-title">Currently —</div>
+    <div class="section-title"><span id="chew-word">Currently —</span></div>
     <div class="current-work">
       <p>
-        He's on the growth marketing team at <a href="https://wisprflow.ai" target="_blank" rel="noopener">
-          <img src="https://cdn.prod.website-files.com/682f84b3838c89f8ff7667db/68d429496a738c46ceced580_logo-full-dark.png"
-               alt="Wispr Flow"
-               class="company-logo wispr-logo"
-               style="height: 18px;"
-               decoding="async"
-               fetchpriority="high">
-        </a>. He also operates <a href="https://www.ez.media" target="_blank" rel="noopener">
+        He's the Head of Growth at <a href="https://conway.tech/" target="_blank" rel="noopener"><img class="conway-wordmark" src="assets/conway.png" alt="Conway Research"></a>, the frontier AI lab building <span class="loyal"><a class="loyal-name" href="https://www.loyal.ai/" target="_blank" rel="noopener">Loyal AI</a> <button id="underdog" type="button" title="Wake Underdog" aria-label="Wake Underdog" disabled><picture><source media="(prefers-reduced-motion: reduce)" srcset="assets/underdog/sleep.png"><img src="assets/underdog/sleep.gif" alt="" width="46" height="43"></picture></button></span>. He also operates <a href="https://www.ez.media" target="_blank" rel="noopener">
           <img src="https://i.imgur.com/DHDX6a5.jpeg"
                alt="ezmedia"
                class="company-logo"
                decoding="async"
                fetchpriority="high">
-        </a>, a performance marketing agency he founded in 2022.
+        </a>, a performance marketing agency he founded in <span id="founding-year">2022</span>.
         Clients include Hong Kong-based Michelin-starred restaurant groups, wellness brands,
         fashion brands, supplement brands and global-facing startups. Since 2025, he's a consultant with the
         <a href="https://www.nzte.govt.nz/" target="_blank" rel="noopener">
@@ -296,10 +282,17 @@
   </section>
 
   <section class="section">
-    <div class="section-title">Previously —</div>
+    <div class="section-title"><span id="previously-word">Previously —</span></div>
     <p>
-      He's worked with <a href="https://www.dapperlabs.com/" target="_blank" rel="noopener">
-        <img src="https://i.imgur.com/w2DA702.png"
+      He was on the growth marketing team at <a href="https://wisprflow.ai" target="_blank" rel="noopener">
+          <img src="https://cdn.prod.website-files.com/682f84b3838c89f8ff7667db/68d429496a738c46ceced580_logo-full-dark.png"
+               alt="Wispr Flow"
+               class="company-logo wispr-logo"
+               style="height: 18px;"
+               decoding="async"
+               fetchpriority="high">
+        </a>. He's worked with <a id="dapper-mark" href="https://www.dapperlabs.com/" target="_blank" rel="noopener">
+        <img src="assets/dapper.png" width="338" height="72"
              alt="Dapper Labs"
              class="company-logo"
              decoding="async"
@@ -337,6 +330,8 @@
     </p>
   </section>
 </main>
+
+<div id="dog-status" role="status" class="dog-status"></div>
 
 <!-- Clock -->
 <div class="time-display" id="timeDisplay">
