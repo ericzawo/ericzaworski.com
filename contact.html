@@ -87,6 +87,8 @@ body.dark a { color: #fff; }
   gap: 40px;
   margin-top: 120px;
 }
+.contact-portrait { width: 300px; max-width: 100%; height: auto; border-radius: 8px; }
+body.dark .contact-portrait { filter: grayscale(1) contrast(1.15) brightness(0.85); }
 .contact-section .info p {
   font-size: 14px;
   margin-bottom: 12px;
@@ -158,11 +160,8 @@ body.dark .switch.on { background: #16a34a; }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .header-nav {
-    position: static;
-    transform: none;
-    margin-bottom: 10px;
-  }
+  body { justify-content: flex-start; }
+  .contact-portrait { order: 1; }
   .time-display {
     position: static;
     transform: none;
@@ -179,8 +178,8 @@ body.dark .switch.on { background: #16a34a; }
     margin-top: 25px;
   }
   .contact-section {
-     flex-direction: column;
-    margin-top: 80px;
+    flex-direction: column;
+    margin-top: 0;
   }
 }
 </style>
@@ -194,6 +193,7 @@ body.dark .switch.on { background: #16a34a; }
 </nav>
 
 <main class="contact-section">
+  <img class="contact-portrait" src="assets/contact-portrait.jpg" width="300" height="300" alt="Eric Zaworski">
   <div class="info">
     <p><strong>About</strong><br>
       Eric Zaworski is the Head of Growth at <strong>Conway Research</strong>, the frontier AI lab building <strong>Loyal AI</strong>. He also does performance marketing consulting under <b>ezmedia</b>. With a background in music journalism, he helps brands grow through paid social, creative strategy and go-to-market planning. He splits his time between Los Angeles, Toronto and Kraków.</p>
