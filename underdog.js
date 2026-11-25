@@ -1,165 +1,150 @@
-// Keep the inline button in the sentence while a pointer-transparent dog visits the text.
 (() => {
   const button = document.querySelector('#underdog');
-  const still = button.querySelector('source');
+  const targets = ['#chew-word', '#dapper-mark', '.toggle-wrap'].map(s => document.querySelector(s));
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   const asset = name => 'assets/underdog/' + name;
-  const word = document.querySelector('#chew-word');
-  let toy;
-  let visitor;
-  let frameId;
-  let run = 0;
+  let turn = 0;
+  let playing = false;
+  let controller;
 
-  function settle() {
-    ++run;
-    cancelAnimationFrame(frameId);
-    visitor?.remove();
-    visitor = null;
-    toy?.remove();
-    toy = null;
-    word.classList.remove('in-mouth');
-    still.srcset = asset('sleep.png');
-    button.setAttribute('aria-pressed', 'false');
-    button.setAttribute('aria-label', 'Wake Underdog');
-    button.title = 'Wake Underdog';
+  // Functions returning viewport coordinates stay accurate as the camera follows the dog.
+  function home() {
+    const rect = button.getBoundingClientRect();
+    return { x: rect.left + rect.width / 2, y: rect.bottom };
   }
 
-  // Range rectangles follow the real line breaks, including after mobile wrapping.
-  function nearbyLedges(home) {
-    const ledges = [];
-    const walker = document.createTreeWalker(document.querySelector('main'), NodeFilter.SHOW_TEXT);
-    const range = document.createRange();
-    while (walker.nextNode()) {
-      if (!walker.currentNode.textContent.trim()) continue;
-      range.selectNodeContents(walker.currentNode);
-      for (const rect of range.getClientRects()) {
-        if (rect.width < 92 || rect.top < 62 || rect.top > innerHeight - 16) continue;
-        if (Math.abs(rect.top - home.y) < 19) continue;
-        ledges.push({ left: rect.left + 22, right: rect.right - 22, y: rect.top + 2 });
-      }
-    }
-    ledges.sort((a, b) => Math.abs(a.y - home.y) - Math.abs(b.y - home.y));
-    const first = ledges[0];
-    return first ? [first, ledges.find(l => Math.abs(l.y - first.y) > 20)].filter(Boolean) : [];
-  }
-
-  async function wake() {
-    if (button.getAttribute('aria-pressed') === 'true') return settle();
-    const thisRun = ++run;
-    button.setAttribute('aria-pressed', 'true');
-    button.setAttribute('aria-label', 'Put Underdog back to sleep');
-    button.title = 'Put Underdog back to sleep';
-    if (motion.matches) {
-      still.srcset = asset('look-up.png');
-      return;
-    }
-
+  async function play() {
+    if (playing) return;
+    playing = true;
+    controller = new AbortController();
+    const { signal } = controller;
+    const target = targets[turn];
     const sprite = new Image();
     sprite.className = 'underdog-visitor';
     sprite.alt = '';
-    sprite.src = asset('wake.gif');
-    const poses = ['walk.gif', 'trot.gif', 'prance.gif', 'bite.png', 'look-up.png'].map(name => {
-      const image = new Image();
-      image.src = asset(name);
-      return image;
-    });
-    try {
-      await Promise.all([sprite.decode(), ...poses.map(image => image.decode())]);
-    } catch {
-      if (thisRun === run) settle();
-      return;
-    }
-    if (thisRun !== run) return;
-    visitor = sprite;
-    document.body.append(sprite);
-    const rect = button.getBoundingClientRect();
-    const home = { x: rect.left + rect.width / 2, y: rect.bottom };
-    let position = home;
     let facing = 1;
-    const steps = [];
-    function step(to, ms, lift, pose, scale, action = '') {
-      steps.push({ from: position, to, ms, lift, pose, scale, action });
-      position = to;
+    let startScroll = scrollY;
+    let movedCamera = false;
+    let thrown = false;
+
+    function markThrown() {
+      if (thrown) return;
+      target.classList.add('tossed');
+      target.inert = true;
+      thrown = true;
+      turn++;
     }
-    step(home, 1280, 0, 'wake.gif', 1);
-    const label = word.getBoundingClientRect();
-    // The bow's mouth sits 21px left of center and 5px above the feet at display size.
-    const grip = { x: label.right + 21, y: label.top + label.height / 2 + 5 };
-    if (label.top > 50 && label.bottom < innerHeight) {
-      step(grip, 650, 28, 'prance.gif', 1);
-      step(grip, 230, 0, 'bite.png', 1, 'bite');
-      step({ x: grip.x + 12, y: grip.y - 5 }, 750, 0, 'bite.png', 1, 'shake');
-      step(position, 740, 0, 'look-up.png', 1, 'throw');
+    function draw(point, scale = 1) {
+      sprite.style.transform = `translate(${point.x-27}px, calc(${point.y}px - 100%)) scale(${facing*scale}, ${scale})`;
     }
-    let ledgeIndex = 0;
-    for (const ledge of nearbyLedges(home)) {
-      const startLeft = Math.abs(position.x - ledge.left) < Math.abs(position.x - ledge.right);
-      const start = { x: startLeft ? ledge.left : ledge.right, y: ledge.y };
-      const distance = Math.min(145, ledge.right - ledge.left);
-      const end = { x: start.x + (startLeft ? distance : -distance), y: ledge.y };
-      step(start, 600, 34, 'walk.gif', 1);
-      const trotting = ledgeIndex++ % 2 === 1;
-      step(end, Math.max(700, Math.abs(end.x - start.x) * (trotting ? 16 : 30)),
-        0, trotting ? 'trot.gif' : 'walk.gif', 1);
-      step(end, 600, 0, 'look-up.png', 1);
-    }
-    step(home, 700, 40, 'walk.gif', 40 / 54);
-    let startTime;
-    let previousScale = 40 / 54;
-    let index = 0;
-    function tick(now) {
-      const s = steps[index];
-      if (startTime === undefined) {
-        startTime = now;
-        if (sprite.getAttribute('src') !== asset(s.pose)) sprite.src = asset(s.pose);
-        if (s.to.x !== s.from.x) facing = s.to.x > s.from.x ? -1 : 1;
-      }
-      const t = Math.min(1, (now - startTime) / s.ms);
-      const progress = s.lift ? t * t * (3 - 2 * t) : t;
-      let x = s.from.x + (s.to.x - s.from.x) * progress;
-      let y = s.from.y + (s.to.y - s.from.y) * progress - 4 * s.lift * t * (1 - t);
-      const scale = previousScale + (s.scale - previousScale) * progress;
-      if (s.action) {
-        facing = 1;
-        if (!toy) {
-          toy = document.createElement('span');
-          toy.className = 'underdog-toy';
-          toy.textContent = word.textContent;
-          toy.setAttribute('aria-hidden', 'true');
-          toy.style.font = getComputedStyle(word).font;
-          toy.style.lineHeight = label.height + 'px';
-          document.body.append(toy);
-          word.classList.add('in-mouth');
+    function animate(pose, duration, render) {
+      signal.throwIfAborted();
+      sprite.src = asset(pose);
+      return new Promise((resolve, reject) => {
+        let id;
+        const begin = performance.now();
+        function cancel() { cancelAnimationFrame(id); reject(signal.reason); }
+        signal.addEventListener('abort', cancel, { once: true });
+        function tick(now) {
+          const t = Math.min(1, Math.max(0, (now-begin)/duration));
+          render(t);
+          if (t < 1) id = requestAnimationFrame(tick);
+          else { signal.removeEventListener('abort', cancel); resolve(); }
         }
-        const shake = s.action === 'shake' ? Math.sin(6 * Math.PI * t) * Math.sin(Math.PI * t) : 0;
-        x += 3 * shake;
-        y += 3 * shake;
-        const flight = s.action === 'throw' ? t : 0;
-        const distance = Math.min(175, innerWidth - grip.x - label.width - 16);
-        toy.style.transform = `translate(${x - 21 - label.width + distance * flight}px, ${y - 5 - label.height / 2 - 4 * Math.min(75, label.top - 20) * flight * (1-flight) + 16 * flight}px) rotate(${shake * 24 + flight * 330}deg)`;
-        toy.style.opacity = String(Math.min(1, (1 - flight) * 5));
-      } else if (toy) {
-        toy.remove();
-        toy = null;
-        word.classList.remove('in-mouth');
-      }
-      sprite.style.transform = `translate(${x - 27}px, calc(${y}px - 100%)) scale(${facing * scale}, ${scale})`;
-      if (t === 1) {
-        previousScale = s.scale;
-        startTime = undefined;
-        if (++index === steps.length) return settle();
-      }
-      frameId = requestAnimationFrame(tick);
+        tick(begin);
+      });
     }
-    tick(performance.now());
+    function move(from, to, jump, t) {
+      const a = from(), b = to();
+      facing = b.x > a.x ? -1 : 1;
+      draw({ x: a.x + (b.x-a.x)*t, y: a.y + (b.y-a.y)*t - 4*jump*t*(1-t) });
+    }
+
+    try {
+      await Promise.all(['wake.gif','walk.gif','trot.gif','prance.gif','bite.png','look-up.png'].map(pose => {
+        const image = new Image();
+        image.src = asset(pose);
+        return image.decode();
+      }));
+      signal.throwIfAborted();
+      button.setAttribute('aria-pressed','true');
+      document.body.classList.add('dog-playing');
+      document.body.append(sprite);
+      if (motion.matches) {
+        await animate('look-up.png',350,() => draw(home(),.74));
+        if (target) markThrown();
+        return;
+      }
+      if (!target) {
+        await animate('look-up.png',330,() => draw(home(),.84));
+        await animate('prance.gif',480,t => {
+          const p = home();
+          draw({ x:p.x, y:p.y-9*Math.sin(Math.PI*t) },.86);
+        });
+        return;
+      }
+
+      target.classList.add('dog-target');
+      await animate('wake.gif',850,() => draw(home(),.86));
+      startScroll = scrollY;
+      const rect = target.getBoundingClientRect();
+      const fromRight = rect.right + 50 < innerWidth;
+      const side = fromRight ? 1 : -1;
+      const camera = rect.bottom > innerHeight-35 || rect.top < 55
+        ? Math.max(0, Math.min(document.documentElement.scrollHeight-innerHeight,
+            startScroll+rect.top-innerHeight*.6)) : startScroll;
+      const grip = () => {
+        const r = target.getBoundingClientRect();
+        return { x: (fromRight ? r.right : r.left)+side*21, y:r.top+r.height/2+5 };
+      };
+      movedCamera = camera !== startScroll;
+      // Give the paws a line of type to walk along before the pounce.
+      const edge = () => {
+        const p = home(), g = grip();
+        return { x:p.x+Math.sign(g.x-p.x)*Math.min(68,Math.abs(g.x-p.x)), y:p.y-19 };
+      };
+      await animate(turn === 1 ? 'trot.gif' : 'walk.gif',1050,t => move(home,edge,3,t));
+      await animate('prance.gif',800,t => {
+        if (movedCamera) window.scrollTo(0,startScroll+(camera-startScroll)*t*t*(3-2*t));
+        move(edge,grip,30,t);
+      });
+      const at = grip();
+      facing = side;
+      target.style.transformOrigin = (fromRight ? 'right' : 'left')+' center';
+      await animate('bite.png',600,t => {
+        const shake = Math.sin(6*Math.PI*t)*Math.sin(Math.PI*t);
+        draw({ x:at.x+4*shake, y:at.y+3*shake });
+        target.style.transform = `translate(${4*shake}px,${3*shake}px) rotate(${side*24*shake}deg)`;
+      });
+      await animate('look-up.png',680,t => {
+        draw(at);
+        target.style.transform = `translate(${side*innerWidth*.55*t}px,${-260*t*(1-t)+32*t}px) rotate(${side*300*t}deg)`;
+        target.style.opacity = String(Math.min(1,(1-t)*5));
+      });
+      markThrown();
+      const launchY = at.y + scrollY;
+      await animate('trot.gif',780,t => {
+        if (movedCamera) window.scrollTo(0,camera+(startScroll-camera)*t);
+        move(() => ({ x:at.x, y:launchY-scrollY }),home,34,t);
+      });
+    } catch (error) {
+      if (!signal.aborted) console.error('Underdog animation failed',error);
+    } finally {
+      if (movedCamera) window.scrollTo(0,startScroll);
+      if (target) {
+        target.classList.remove('dog-target');
+        for (const key of ['transform','transform-origin','opacity']) target.style.removeProperty(key);
+      }
+      sprite.remove();
+      document.body.classList.remove('dog-playing');
+      button.setAttribute('aria-pressed','false');
+      playing = false;
+    }
   }
 
   button.disabled = false;
-  settle();
-  button.addEventListener('click', wake);
-  for (const event of ['resize', 'scroll', 'pagehide']) {
-    window.addEventListener(event, settle, { passive: true });
-  }
-  motion.addEventListener('change', settle);
-  document.addEventListener('keydown', event => { if (event.key === 'Escape') settle(); });
+  button.addEventListener('click',play);
+  document.addEventListener('keydown',e => { if (e.key === 'Escape') controller?.abort(); });
+  window.addEventListener('pagehide',() => controller?.abort());
+  motion.addEventListener('change',() => controller?.abort());
 })();

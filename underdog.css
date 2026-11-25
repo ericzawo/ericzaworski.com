@@ -27,15 +27,6 @@ body.dark #underdog { color: white; }
 }
 @media (prefers-reduced-motion: reduce) {
   body { opacity: 1; }
-  #underdog[aria-pressed="true"] picture { visibility: visible; }
-}
-#chew-word.in-mouth { opacity: 0; }
-.underdog-toy {
-  position: fixed;
-  inset: 0 auto auto 0;
-  pointer-events: none;
-  z-index: 799;
-  transform-origin: right center;
 }
 @font-face {
   font-family: Gaegu;
@@ -48,3 +39,15 @@ body.dark #underdog { color: white; }
   font: 700 21px/1 Gaegu, cursive;
   letter-spacing: 0;
 }
+.conway-wordmark {
+  display: inline-block;
+  width: 83px;
+  height: auto;
+  vertical-align: -.1em;
+}
+body.dark .conway-wordmark { filter: invert(1); }
+#dapper-mark { display: inline-block; }
+#chew-word { display: inline-block; }
+.tossed { visibility: hidden !important; }
+body.dog-playing main > .section { content-visibility: visible; }
+.toggle-wrap.dog-target { content-visibility: visible; z-index: 790; }
